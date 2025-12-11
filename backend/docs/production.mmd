@@ -1,0 +1,54 @@
+graph TB
+    subgraph "Load Balancer"
+        A[Nginx/CloudFlare]
+    end
+
+    subgraph "Frontend Tier"
+        B[React App<br/>CDN/Vercel]
+    end
+
+    subgraph "Backend Tier"
+        C[Backend API<br/>Docker Container]
+        D[Backend API<br/>Docker Container]
+    end
+
+    subgraph "AI Tier"
+        E[AI RAG Service<br/>Docker Container]
+        F[AI RAG Service<br/>Docker Container]
+    end
+
+    subgraph "Database Tier"
+        G[PostgreSQL<br/>Managed Service]
+        H[MongoDB Atlas<br/>Cloud Service]
+        I[Redis Cache<br/>Managed Service]
+    end
+
+    subgraph "External APIs"
+        J[Groq API]
+        K[HuggingFace API]
+    end
+
+    A --> B
+    A --> C
+    A --> D
+    C --> E
+    D --> F
+
+    C --> G
+    D --> G
+    C --> I
+    D --> I
+
+    E --> H
+    F --> H
+    E --> J
+    E --> K
+    F --> J
+    F --> K
+
+    style A fill:#ffebee
+    style B fill:#e8f5e8
+    style C fill:#f3e5f5
+    style D fill:#f3e5f5
+    style E fill:#fff3e0
+    style F fill:#fff3e0

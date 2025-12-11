@@ -1,0 +1,51 @@
+graph TB
+    subgraph "Frontend Tier"
+        A[React Web App]
+        B[React Native Mobile]
+    end
+
+    subgraph "Backend Tier"
+        C[Node.js Express API]
+        D[Authentication Service]
+        E[Health Record Service]
+        F[AI Integration Service]
+    end
+
+    subgraph "AI Tier"
+        G[AI RAG Microservice]
+        H[Vector Search Engine]
+        I[Medical Guidelines DB]
+        J[Dual LLM Service]
+    end
+
+    subgraph "Data Tier"
+        K[PostgreSQL]
+        L[MongoDB Atlas]
+        M[Redis Cache]
+    end
+
+    subgraph "External APIs"
+        N[Groq API]
+        O[HuggingFace API]
+    end
+
+    A --> C
+    B --> C
+    C --> D
+    C --> E
+    C --> F
+    F --> G
+
+    G --> H
+    G --> I
+    G --> J
+    J --> N
+    J --> O
+
+    E --> K
+    G --> L
+    C --> M
+
+    style F fill:#e1f5fe
+    style G fill:#fff3e0
+    style J fill:#f3e5f5

@@ -1,0 +1,43 @@
+sequenceDiagram
+    participant Frontend as Frontend App
+    participant Backend as Backend API
+    participant Auth as Auth Service
+    participant HealthSvc as Health Service
+    participant AISvc as AI Service
+    participant RAG as AI RAG Service
+    participant PostgreSQL as PostgreSQL
+    participant MongoDB as MongoDB
+
+    %% User Registration/Login
+    Frontend->>Backend: POST /api/auth/login
+    Backend->>Auth: authenticate(credentials)
+    Auth->>PostgreSQL: SELECT user WHERE email=...
+    PostgreSQL-->>Auth: User data
+    Auth-->>Backend: JWT token
+    Backend-->>Frontend: Authentication response
+
+    %% Health Record Creation
+    Frontend->>Backend: POST /api/health-records (with JWT)
+    Backend->>HealthSvc: createRecord(userId, data)
+    HealthSvc->>PostgreSQL: INSERT health record
+    PostgreSQL-->>HealthSvc: Record created
+    HealthSvc-->>Backend: Success response
+    Backend-->>Frontend: Record created
+
+    %% AI Analysis Request
+    Frontend->>Backend: GET /api/analysis/recordId
+    Backend->>HealthSvc: getRecordById(recordId)
+    HealthSvc->>PostgreSQL: SELECT record
+    PostgreSQL-->>HealthSvc: Record data
+    
+    Backend->>AISvc: analyzeHealthRecord(record)
+    AISvc->>RAG: POST /api/v1/analyze
+    RAG->>MongoDB: Vector similarity search
+    MongoDB-->>RAG: Similar records
+    RAG->>RAG: Generate AI analysis
+    RAG-->>AISvc: Analysis result
+    AISvc-->>Backend: Processed analysis
+    
+    Backend->>HealthSvc: updateRecordAnalysis(recordId, analysis)
+    HealthSvc->>PostgreSQL: UPDATE record analysis
+    Backend-->>Frontend: Analysis response

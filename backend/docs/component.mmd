@@ -1,0 +1,70 @@
+graph TB
+    subgraph "Client Layer"
+        A[Web Frontend]
+        B[Mobile App]
+    end
+
+    subgraph "API Gateway Layer"
+        C[Express.js Server]
+        D[CORS Middleware]
+        E[Body Parser]
+    end
+
+    subgraph "Authentication Layer"
+        F[JWT Middleware]
+        G[Auth Controller]
+        H[Auth Service]
+    end
+
+    subgraph "Business Logic Layer"
+        I[Health Record Controller]
+        J[Health Record Service]
+        K[Analysis Service]
+        L[AI Service]
+    end
+
+    subgraph "Validation Layer"
+        M[Request Validation]
+        N[Schema Validation]
+        O[Error Handler]
+    end
+
+    subgraph "Data Access Layer"
+        P[User Model]
+        Q[Health Record Model]
+        R[Database Config]
+    end
+
+    subgraph "External Services"
+        S[PostgreSQL Database]
+        T[AI RAG Microservice]
+    end
+
+    A --> C
+    B --> C
+    C --> D
+    C --> E
+    C --> F
+    F --> G
+    G --> H
+
+    C --> I
+    I --> J
+    I --> K
+    K --> L
+
+    C --> M
+    M --> N
+    C --> O
+
+    J --> Q
+    H --> P
+    P --> R
+    Q --> R
+    R --> S
+
+    L --> T
+
+    style L fill:#e1f5fe
+    style T fill:#fff3e0
+    style S fill:#e8f5e8

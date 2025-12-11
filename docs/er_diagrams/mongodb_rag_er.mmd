@@ -1,0 +1,51 @@
+erDiagram
+    HEALTH_RECORDS_COLLECTION {
+        objectId _id PK "MongoDB Document ID"
+        string date "Record Date YYYY-MM-DD"
+        object symptoms "SOCRATES Framework Dict"
+        object lifestyle "Lifestyle Factors Dict"
+        object biometrics "Biometric Measurements"
+        object metadata "Additional Metadata"
+        string reports "Medical Reports Text"
+        array embeddings "Vector Embeddings"
+        timestamp created_at "Document Creation"
+        timestamp updated_at "Last Update"
+    }
+    
+    GENERIC_RECORDS_COLLECTION {
+        objectId _id PK "MongoDB Document ID"
+        string id "Optional Record ID"
+        object data "Generic Record Data"
+        object metadata "Record Metadata"
+        array embeddings "Vector Embeddings"
+        timestamp indexed_at "Indexing Timestamp"
+    }
+    
+    VECTOR_INDEX {
+        string index_name "Vector Index Name"
+        string collection "Target Collection"
+        string field_path "Embeddings Field Path"
+        int dimensions "Vector Dimensions"
+        string similarity "Similarity Metric"
+    }
+    
+    ANALYSIS_QUERIES {
+        string query "User Query Text"
+        string location "Optional Location"
+        timestamp query_time "Query Timestamp"
+        object filters "Query Filters"
+        int max_results "Result Limit"
+    }
+    
+    ANALYSIS_RESPONSES {
+        string analysis "AI Generated Analysis"
+        timestamp response_time "Response Timestamp"
+        float confidence "Confidence Score"
+        int context_used "Context Records Count"
+        object metadata "Response Metadata"
+    }
+    
+    HEALTH_RECORDS_COLLECTION ||--|| VECTOR_INDEX : "indexed_by"
+    GENERIC_RECORDS_COLLECTION ||--|| VECTOR_INDEX : "indexed_by"
+    ANALYSIS_QUERIES ||--o{ HEALTH_RECORDS_COLLECTION : "searches"
+    ANALYSIS_QUERIES ||--|| ANALYSIS_RESPONSES : "generates"

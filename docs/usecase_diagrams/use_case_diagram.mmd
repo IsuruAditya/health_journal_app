@@ -1,0 +1,104 @@
+graph TB
+    %% Actors
+    Patient[👤 Patient/User]
+    Doctor[👨⚕️ Healthcare Provider]
+    System[🤖 AI System]
+    
+    %% Use Cases - Authentication & User Management
+    subgraph Auth["🔐 Authentication & User Management"]
+        UC1[Register Account]
+        UC2[Login/Logout]
+        UC3[Manage Profile]
+    end
+    
+    %% Use Cases - Health Record Management
+    subgraph Records["📋 Health Record Management"]
+        UC4[Create Health Record]
+        UC5[View Health Records]
+        UC6[Edit Health Record]
+        UC7[Delete Health Record]
+        UC8[Search Records]
+    end
+    
+    %% Use Cases - Symptom Tracking
+    subgraph Symptoms["🩺 Symptom Tracking"]
+        UC9[Record Symptoms SOCRATES]
+        UC10[Track Vital Signs]
+        UC11[Log Medications]
+        UC12[Note Lifestyle Factors]
+    end
+    
+    %% Use Cases - AI Analysis
+    subgraph Analysis["🧠 AI Analysis & Insights"]
+        UC13[Request Health Analysis]
+        UC14[Generate AI Insights]
+        UC15[View Analysis Results]
+        UC16[Export Analysis Report]
+    end
+    
+    %% Use Cases - Data Management
+    subgraph Data["💾 Data Management"]
+        UC17[Sync Data to Vector Store]
+        UC18[Generate Embeddings]
+        UC19[Perform Vector Search]
+        UC20[Cache Analysis Results]
+    end
+    
+    %% Use Cases - Healthcare Provider
+    subgraph Provider["👨⚕️ Healthcare Provider Functions"]
+        UC21[Review Patient Records]
+        UC22[Analyze Patient Trends]
+        UC23[Generate Medical Reports]
+    end
+    
+    %% Patient Relationships
+    Patient --> UC1
+    Patient --> UC2
+    Patient --> UC3
+    Patient --> UC4
+    Patient --> UC5
+    Patient --> UC6
+    Patient --> UC7
+    Patient --> UC8
+    Patient --> UC9
+    Patient --> UC10
+    Patient --> UC11
+    Patient --> UC12
+    Patient --> UC13
+    Patient --> UC15
+    Patient --> UC16
+    
+    %% Healthcare Provider Relationships
+    Doctor --> UC2
+    Doctor --> UC21
+    Doctor --> UC22
+    Doctor --> UC23
+    Doctor --> UC5
+    
+    %% System Relationships
+    System --> UC14
+    System --> UC17
+    System --> UC18
+    System --> UC19
+    System --> UC20
+    
+    %% Include Relationships
+    UC4 -.->|includes| UC9
+    UC4 -.->|includes| UC10
+    UC13 -.->|includes| UC19
+    UC14 -.->|includes| UC18
+    UC21 -.->|includes| UC5
+    
+    %% Extend Relationships
+    UC16 -.->|extends| UC15
+    UC23 -.->|extends| UC22
+    UC8 -.->|extends| UC5
+    
+    %% Styling
+    classDef actorClass fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef useCaseClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef systemClass fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    
+    class Patient,Doctor actorClass
+    class System systemClass
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11,UC12,UC13,UC14,UC15,UC16,UC17,UC18,UC19,UC20,UC21,UC22,UC23 useCaseClass

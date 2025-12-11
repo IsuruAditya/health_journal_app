@@ -1,0 +1,52 @@
+C4Component
+    title Component Diagram - AI RAG Microservice
+
+    Container(api, "Health Journal API", "Node.js", "Main backend service")
+    Person(user, "User", "Health tracking")
+
+    Container_Boundary(rag, "AI RAG Microservice") {
+        Component(router, "API Router", "FastAPI", "HTTP request routing")
+        Component(health_api, "Health Endpoints", "FastAPI", "Health-specific API endpoints")
+        Component(generic_api, "Generic Endpoints", "FastAPI", "Generic RAG endpoints")
+        
+        Component(rag_service, "RAG Service", "Python", "Core RAG orchestration")
+        Component(dual_llm, "Dual LLM Service", "Python", "LLM interaction management")
+        Component(medical_guidelines, "Medical Guidelines", "Python", "Clinical knowledge base")
+        
+        Component(validation, "Validation Layer", "Pydantic", "Input sanitization and validation")
+        Component(security, "Security Layer", "Python", "Authentication and authorization")
+        Component(monitoring, "Monitoring", "Python", "Logging and metrics")
+        
+        Component(mongo_store, "MongoDB Store", "PyMongo", "Vector database operations")
+        Component(embeddings, "Embeddings Engine", "HuggingFace", "Text vectorization")
+        Component(vector_search, "Vector Search", "MongoDB Atlas", "Similarity search")
+    }
+
+    ContainerDb(mongodb, "MongoDB Atlas", "Vector DB", "Embeddings storage")
+    Container(groq, "Groq LLM", "External API", "AI inference")
+
+    Rel(user, router, "Health queries", "HTTPS/JSON")
+    Rel(api, router, "Analysis requests", "HTTP/JSON")
+
+    Rel(router, health_api, "Route health requests")
+    Rel(router, generic_api, "Route generic requests")
+    Rel(health_api, validation, "Validate input")
+    Rel(generic_api, validation, "Validate input")
+
+    Rel(health_api, rag_service, "Process query")
+    Rel(generic_api, rag_service, "Process query")
+    Rel(rag_service, dual_llm, "Generate response")
+    Rel(rag_service, medical_guidelines, "Apply guidelines")
+
+    Rel(rag_service, mongo_store, "Store/retrieve data")
+    Rel(rag_service, vector_search, "Similarity search")
+    Rel(mongo_store, mongodb, "Database operations")
+    Rel(vector_search, mongodb, "Vector queries")
+
+    Rel(dual_llm, groq, "LLM inference", "HTTPS/API")
+    Rel(embeddings, mongo_store, "Store vectors")
+
+    Rel(security, router, "Authenticate requests")
+    Rel(monitoring, rag_service, "Log operations")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant U as User (Frontend)
+    participant B as Backend API
+    participant PG as PostgreSQL
+    participant AI as AI RAG Service
+    participant MG as MongoDB
+    
+    U->>B: GET /api/analysis/123
+    B->>PG: SELECT record WHERE id=123
+    PG->>B: Return health record
+    
+    B->>AI: POST /api/v1/analyze
+    Note over B,AI: {"query": "Patient: headache. Severity: 8..."}
+    
+    AI->>MG: Vector similarity search
+    MG->>AI: Return similar records
+    AI->>AI: Generate medical analysis
+    AI->>B: Return structured analysis
+    
+    B->>PG: UPDATE record SET analysis=...
+    B->>U: {"success": true, "data": {...}}

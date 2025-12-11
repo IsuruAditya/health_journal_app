@@ -1,0 +1,67 @@
+flowchart TD
+    %% External Actors
+    U[👤 User/Patient]
+    D[👨‍⚕️ Healthcare Provider]
+    
+    %% Frontend Layer
+    subgraph Frontend["🖥️ Frontend Applications"]
+        WA[Web App<br/>React/TypeScript]
+        MA[Mobile App<br/>React Native]
+    end
+    
+    %% Backend Layer
+    subgraph Backend["⚙️ Backend Services"]
+        API[Health Journal API<br/>Node.js/Express]
+        RAG[AI RAG Service<br/>Python/FastAPI]
+    end
+    
+    %% Data Layer
+    subgraph Data["💾 Data Storage"]
+        PG[(PostgreSQL<br/>Health Records)]
+        MG[(MongoDB Atlas<br/>Vector Store)]
+    end
+    
+    %% External Services
+    subgraph External["🌐 External Services"]
+        GROQ[Groq LLM API<br/>AI Inference]
+        HF[HuggingFace<br/>Embeddings]
+    end
+    
+    %% User Interactions
+    U -->|"📱 Track symptoms<br/>📊 View analysis"| WA
+    U -->|"📱 Mobile tracking"| MA
+    D -->|"👀 Review patient data"| WA
+    
+    %% Frontend to Backend
+    WA -->|"🔄 REST API calls<br/>CRUD operations"| API
+    MA -->|"🔄 REST API calls<br/>CRUD operations"| API
+    
+    %% Backend Data Flow
+    API -->|"💾 Store/retrieve<br/>health records"| PG
+    API -->|"🤖 Request AI analysis<br/>symptom queries"| RAG
+    
+    %% RAG Service Operations
+    RAG -->|"🔍 Vector similarity<br/>search queries"| MG
+    RAG -->|"🧠 Generate health<br/>analysis & insights"| GROQ
+    RAG -->|"📊 Create text<br/>embeddings"| HF
+    
+    %% Data Synchronization
+    API -.->|"🔄 Sync health records<br/>for RAG processing"| MG
+    
+    %% Response Flow
+    RAG -->|"📋 AI analysis<br/>recommendations"| API
+    API -->|"📊 Analysis results<br/>health insights"| WA
+    API -->|"📊 Analysis results<br/>health insights"| MA
+    
+    %% Styling
+    classDef userClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef frontendClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef backendClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef dataClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef externalClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class U,D userClass
+    class WA,MA frontendClass
+    class API,RAG backendClass
+    class PG,MG dataClass
+    class GROQ,HF externalClass

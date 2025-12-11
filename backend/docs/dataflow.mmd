@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant F as Frontend
+    participant B as Backend API
+    participant DB as PostgreSQL
+    participant AI as AI RAG Service
+    
+    F->>B: POST /api/health-records
+    B->>B: Validate data
+    B->>DB: Store health record
+    DB->>B: Return record ID
+    B->>AI: Send record to AI RAG (optional)
+    AI->>AI: Store in vector database
+    B->>F: Return success response

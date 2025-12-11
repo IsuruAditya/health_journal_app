@@ -1,0 +1,10 @@
+{
+  "name": "HealthJournal",
+  "displayName": "Health Journal",
+  "expo": {
+    "name": "Health Journal",
+    "slug": "health-journal",
+    "version": "1.0.0",
+    "platforms": ["ios", "android"]
+  }
+}

@@ -1,0 +1,55 @@
+erDiagram
+    USERS {
+        int id PK "Primary Key"
+        varchar email UK "Unique Email"
+        varchar password "Hashed Password"
+        timestamp created_at "Account Creation"
+    }
+    
+    HEALTH_RECORDS {
+        int id PK "Primary Key"
+        int user_id FK "Foreign Key to Users"
+        date record_date "Record Date"
+        time record_time "Record Time"
+        varchar site "SOCRATES: Site/Location"
+        varchar onset "SOCRATES: Onset Timing"
+        text character "SOCRATES: Character/Quality"
+        varchar radiation "SOCRATES: Radiation/Spread"
+        text associations "SOCRATES: Associated Symptoms"
+        text time_course "SOCRATES: Time Course/Duration"
+        text exacerbating_factors "SOCRATES: Exacerbating Factors"
+        int severity "SOCRATES: Severity (1-10)"
+        text palliating_factors "PQRST: Palliating Factors"
+        text quality "PQRST: Quality Description"
+        varchar region "PQRST: Region Affected"
+        text symptoms "General Symptoms"
+        text medications "Current Medications"
+        text diet_notes "Diet Information"
+        jsonb vital_signs "Vital Signs JSON"
+        text personal_notes "Personal Notes"
+        jsonb ai_analysis "AI Analysis Results"
+        timestamp created_at "Record Creation"
+        timestamp updated_at "Last Update"
+    }
+    
+    VITAL_SIGNS {
+        string blood_pressure "Blood Pressure"
+        string temperature "Body Temperature"
+        string pulse "Pulse Rate"
+        string weight "Body Weight"
+    }
+    
+    AI_ANALYSIS {
+        int record_id "Associated Record"
+        string analysis_date "Analysis Date"
+        string symptom_severity "Severity Assessment"
+        array symptom_pattern "Pattern Analysis"
+        array risk_factors "Risk Factors"
+        array recommendations "AI Recommendations"
+        object trends "Trend Analysis"
+        array red_flags "Warning Signs"
+    }
+    
+    USERS ||--o{ HEALTH_RECORDS : "owns"
+    HEALTH_RECORDS ||--|| VITAL_SIGNS : "contains"
+    HEALTH_RECORDS ||--o| AI_ANALYSIS : "analyzed_by"

@@ -1,0 +1,87 @@
+erDiagram
+    %% PostgreSQL Database (Health Journal App)
+    USERS {
+        int id PK "Primary Key"
+        varchar email UK "Unique Email"
+        varchar password "Hashed Password"
+        timestamp created_at "Account Creation"
+    }
+    
+    HEALTH_RECORDS {
+        int id PK "Primary Key"
+        int user_id FK "Foreign Key to Users"
+        date record_date "Record Date"
+        time record_time "Record Time"
+        varchar site "SOCRATES: Site"
+        varchar onset "SOCRATES: Onset"
+        text character "SOCRATES: Character"
+        varchar radiation "SOCRATES: Radiation"
+        text associations "SOCRATES: Associations"
+        text time_course "SOCRATES: Time Course"
+        text exacerbating_factors "SOCRATES: Exacerbating"
+        int severity "SOCRATES: Severity"
+        text palliating_factors "PQRST: Palliating"
+        text quality "PQRST: Quality"
+        varchar region "PQRST: Region"
+        text symptoms "General Symptoms"
+        text medications "Medications"
+        text diet_notes "Diet Notes"
+        jsonb vital_signs "Vital Signs"
+        text personal_notes "Personal Notes"
+        jsonb ai_analysis "AI Analysis"
+        timestamp created_at "Created"
+        timestamp updated_at "Updated"
+    }
+    
+    %% MongoDB Collections (RAG Microservice)
+    RAG_HEALTH_RECORDS {
+        objectId _id PK "MongoDB ID"
+        string source_id "PostgreSQL Record ID"
+        string date "Record Date"
+        object symptoms "SOCRATES Dict"
+        object lifestyle "Lifestyle Dict"
+        object biometrics "Biometrics Dict"
+        object metadata "Metadata Dict"
+        string reports "Medical Reports"
+        array embeddings "Vector Embeddings"
+        timestamp synced_at "Sync Timestamp"
+    }
+    
+    RAG_GENERIC_RECORDS {
+        objectId _id PK "MongoDB ID"
+        string id "Record Identifier"
+        object data "Generic Data"
+        object metadata "Metadata"
+        array embeddings "Vector Embeddings"
+        string tenant_id "Multi-tenant ID"
+        timestamp indexed_at "Index Time"
+    }
+    
+    %% API Integration Layer
+    API_SYNC_LOG {
+        int id PK "Sync Log ID"
+        int health_record_id FK "Source Record"
+        string mongo_document_id "Target Document"
+        string sync_status "Success/Failed"
+        text error_message "Error Details"
+        timestamp sync_time "Sync Timestamp"
+    }
+    
+    %% Analysis Results
+    AI_ANALYSIS_CACHE {
+        int id PK "Cache ID"
+        int health_record_id FK "Source Record"
+        string query_hash "Query Hash"
+        text analysis_result "AI Analysis"
+        float confidence_score "Confidence"
+        int context_records_used "Context Count"
+        timestamp generated_at "Generation Time"
+        timestamp expires_at "Cache Expiry"
+    }
+    
+    %% Relationships
+    USERS ||--o{ HEALTH_RECORDS : "owns"
+    HEALTH_RECORDS ||--o| API_SYNC_LOG : "synced_via"
+    API_SYNC_LOG ||--|| RAG_HEALTH_RECORDS : "creates"
+    HEALTH_RECORDS ||--o{ AI_ANALYSIS_CACHE : "analyzed_as"
+    RAG_HEALTH_RECORDS ||--o{ AI_ANALYSIS_CACHE : "provides_context"

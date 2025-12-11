@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant F as Frontend
+    participant B as Backend API
+    participant DB as PostgreSQL
+    participant AI as AI RAG Service
+    participant AS as AI Service
+    
+    F->>B: GET /api/analysis/123
+    B->>DB: Fetch health record
+    DB->>B: Return record data
+    B->>AS: Call AIService.analyzeHealthRecord()
+    AS->>AI: POST /api/v1/analyze
+    AI->>AI: Vector search + AI analysis
+    AI->>AS: Return structured analysis
+    AS->>B: Return processed analysis
+    B->>DB: Store analysis (optional)
+    B->>F: Return analysis results

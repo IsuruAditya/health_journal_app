@@ -1,0 +1,29 @@
+graph TB
+    subgraph "Developer Machine"
+        A[Frontend Dev Server<br/>localhost:3000]
+        B[Backend Dev Server<br/>localhost:5000]
+        C[AI RAG Service<br/>localhost:8000]
+    end
+
+    subgraph "Local Databases"
+        D[PostgreSQL<br/>localhost:5432]
+        E[MongoDB Local<br/>localhost:27017]
+    end
+
+    subgraph "External Services"
+        F[Groq API]
+        G[HuggingFace API]
+        H[MongoDB Atlas]
+    end
+
+    A --> B
+    B --> C
+    B --> D
+    C --> E
+    C --> H
+    C --> F
+    C --> G
+
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#fff3e0

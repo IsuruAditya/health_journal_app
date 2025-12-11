@@ -1,0 +1,53 @@
+erDiagram
+    HEALTH_RECORD {
+        int id PK "Record ID"
+        int user_id FK "User ID"
+        date record_date "Date"
+        time record_time "Time"
+    }
+    
+    SOCRATES_FRAMEWORK {
+        int record_id FK "Health Record ID"
+        varchar site "S: Site/Location of symptom"
+        varchar onset "O: Onset timing and circumstances"
+        text character "C: Character/Quality of symptom"
+        varchar radiation "R: Radiation/Spread pattern"
+        text associations "A: Associated symptoms"
+        text time_course "T: Time course/Duration"
+        text exacerbating_factors "E: Exacerbating factors"
+        int severity "S: Severity scale 1-10"
+    }
+    
+    PQRST_ADDITIONS {
+        int record_id FK "Health Record ID"
+        text palliating_factors "P: Palliating factors"
+        text quality "Q: Quality description"
+        varchar region "R: Region affected"
+        text timing "T: Timing patterns"
+    }
+    
+    OLDCARTS_ELEMENTS {
+        int record_id FK "Health Record ID"
+        varchar onset "O: Onset"
+        varchar location "L: Location"
+        text duration "D: Duration"
+        text character "C: Character"
+        text aggravating_factors "A: Aggravating"
+        text relieving_factors "R: Relieving"
+        text timing "T: Timing"
+        int severity "S: Severity"
+    }
+    
+    CLINICAL_ASSESSMENT {
+        int record_id FK "Health Record ID"
+        text chief_complaint "Primary Complaint"
+        text history_present_illness "HPI Details"
+        text review_of_systems "ROS Findings"
+        text physical_examination "PE Results"
+        text assessment_plan "A&P Notes"
+    }
+    
+    HEALTH_RECORD ||--|| SOCRATES_FRAMEWORK : "follows"
+    HEALTH_RECORD ||--|| PQRST_ADDITIONS : "includes"
+    HEALTH_RECORD ||--|| OLDCARTS_ELEMENTS : "incorporates"
+    HEALTH_RECORD ||--o| CLINICAL_ASSESSMENT : "supports"

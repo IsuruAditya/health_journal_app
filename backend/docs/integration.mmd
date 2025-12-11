@@ -1,0 +1,16 @@
+graph TD
+    A[Frontend App] --> B[Backend API]
+    B --> C[Health Record Service]
+    B --> D[AI Service]
+    
+    C --> E[PostgreSQL Database]
+    D --> F[AI RAG Microservice]
+    F --> G[MongoDB Vector DB]
+    F --> H[Groq/HuggingFace AI]
+    
+    B --> I[Analysis Service]
+    I --> D
+    
+    style D fill:#e1f5fe
+    style F fill:#fff3e0
+    style I fill:#e8f5e8

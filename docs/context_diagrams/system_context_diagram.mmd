@@ -1,0 +1,32 @@
+C4Context
+    title System Context Diagram - Salubro Health AI Platform
+
+    Person(user, "Patient/User", "Individual tracking health symptoms and seeking AI-powered health insights")
+    Person(doctor, "Healthcare Provider", "Medical professional reviewing patient data and AI recommendations")
+    
+    System_Boundary(salubro, "Salubro Health Platform") {
+        System(webapp, "Health Journal Web App", "React web application for health record management")
+        System(mobile, "Health Journal Mobile App", "React Native mobile app for on-the-go health tracking")
+        System(backend, "Health Journal Backend", "Node.js/TypeScript API with PostgreSQL database")
+        System(rag, "AI RAG Microservice", "Python FastAPI service with MongoDB vector store")
+    }
+    
+    System_Ext(groq, "Groq LLM API", "External AI service for health analysis and recommendations")
+    System_Ext(huggingface, "HuggingFace Embeddings", "Sentence transformer models for vector embeddings")
+    System_Ext(mongodb, "MongoDB Atlas", "Cloud vector database for RAG operations")
+    System_Ext(postgres, "PostgreSQL Database", "Primary relational database for structured health records")
+    
+    Rel(user, webapp, "Records symptoms, views analysis", "HTTPS")
+    Rel(user, mobile, "Mobile health tracking", "HTTPS")
+    Rel(doctor, webapp, "Reviews patient data", "HTTPS")
+    
+    Rel(webapp, backend, "API calls", "REST/JSON")
+    Rel(mobile, backend, "API calls", "REST/JSON")
+    Rel(backend, postgres, "Store/retrieve records", "SQL")
+    Rel(backend, rag, "Request AI analysis", "HTTP/JSON")
+    
+    Rel(rag, mongodb, "Vector search", "MongoDB Protocol")
+    Rel(rag, groq, "LLM inference", "HTTPS/API")
+    Rel(rag, huggingface, "Generate embeddings", "Python SDK")
+    
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="2")

@@ -1,0 +1,96 @@
+graph TB
+    %% Primary Actors
+    Patient[👤 Patient]
+    Doctor[👨⚕️ Healthcare Provider]
+    
+    %% Secondary Actors
+    AISystem[🤖 AI RAG System]
+    Database[(💾 Database)]
+    ExternalAPI[🌐 External APIs]
+    
+    %% Core Use Cases with Details
+    subgraph Core["🎯 Core Health Management"]
+        UC1["📝 Create Health Record<br/>• SOCRATES framework<br/>• Vital signs entry<br/>• Medication logging"]
+        UC2["📊 Analyze Symptoms<br/>• AI-powered analysis<br/>• Pattern recognition<br/>• Risk assessment"]
+        UC3["📈 Track Health Trends<br/>• Historical analysis<br/>• Progress monitoring<br/>• Trend visualization"]
+        UC4["🔍 Search Health Data<br/>• Symptom search<br/>• Date range filtering<br/>• Severity filtering"]
+    end
+    
+    %% Authentication & Security
+    subgraph Auth["🔐 Security & Access"]
+        UC5["🔑 User Authentication<br/>• JWT token auth<br/>• Session management<br/>• Password security"]
+        UC6["👥 Role Management<br/>• Patient access<br/>• Provider access<br/>• Admin functions"]
+    end
+    
+    %% AI & Analytics
+    subgraph AI["🧠 AI & Analytics"]
+        UC7["🤖 Generate AI Insights<br/>• Vector similarity search<br/>• LLM analysis<br/>• Medical guidelines"]
+        UC8["📋 Clinical Assessment<br/>• SOCRATES evaluation<br/>• Risk stratification<br/>• Recommendations"]
+        UC9["🔄 Data Synchronization<br/>• PostgreSQL to MongoDB<br/>• Vector embeddings<br/>• Real-time sync"]
+    end
+    
+    %% Healthcare Provider Functions
+    subgraph Provider["👨⚕️ Provider Tools"]
+        UC10["📋 Review Patient Data<br/>• Comprehensive view<br/>• Historical records<br/>• AI insights"]
+        UC11["📊 Generate Reports<br/>• Medical summaries<br/>• Trend analysis<br/>• Export functionality"]
+        UC12["⚠️ Monitor Alerts<br/>• Red flag detection<br/>• Critical symptoms<br/>• Urgent notifications"]
+    end
+    
+    %% Mobile & Web Access
+    subgraph Access["📱 Multi-Platform Access"]
+        UC13["💻 Web Application<br/>• Desktop interface<br/>• Full functionality<br/>• Responsive design"]
+        UC14["📱 Mobile Application<br/>• On-the-go tracking<br/>• Quick symptom entry<br/>• Push notifications"]
+    end
+    
+    %% Relationships - Patient
+    Patient --> UC1
+    Patient --> UC2
+    Patient --> UC3
+    Patient --> UC4
+    Patient --> UC5
+    Patient --> UC13
+    Patient --> UC14
+    
+    %% Relationships - Healthcare Provider
+    Doctor --> UC5
+    Doctor --> UC6
+    Doctor --> UC10
+    Doctor --> UC11
+    Doctor --> UC12
+    Doctor --> UC13
+    
+    %% Relationships - AI System
+    AISystem --> UC7
+    AISystem --> UC8
+    AISystem --> UC9
+    
+    %% System Dependencies
+    UC1 --> Database
+    UC2 --> AISystem
+    UC3 --> Database
+    UC7 --> ExternalAPI
+    UC9 --> Database
+    
+    %% Include/Extend Relationships
+    UC2 -.->|includes| UC7
+    UC2 -.->|includes| UC8
+    UC10 -.->|includes| UC3
+    UC11 -.->|extends| UC10
+    UC12 -.->|extends| UC8
+    
+    %% Styling
+    classDef primaryActor fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef secondaryActor fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef coreUseCase fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef authUseCase fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef aiUseCase fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef providerUseCase fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef accessUseCase fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    
+    class Patient,Doctor primaryActor
+    class AISystem,Database,ExternalAPI secondaryActor
+    class UC1,UC2,UC3,UC4 coreUseCase
+    class UC5,UC6 authUseCase
+    class UC7,UC8,UC9 aiUseCase
+    class UC10,UC11,UC12 providerUseCase
+    class UC13,UC14 accessUseCase

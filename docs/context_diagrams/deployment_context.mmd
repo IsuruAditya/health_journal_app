@@ -1,0 +1,43 @@
+C4Deployment
+    title Deployment Diagram - Salubro Health AI Platform
+
+    Deployment_Node(user_device, "User Device", "Desktop/Mobile") {
+        Container(browser, "Web Browser", "Chrome/Safari/Firefox", "Web application runtime")
+        Container(mobile_app, "Mobile App", "iOS/Android", "Native mobile application")
+    }
+
+    Deployment_Node(cloud, "Cloud Infrastructure", "AWS/Azure/GCP") {
+        Deployment_Node(web_tier, "Web Tier", "Load Balancer + CDN") {
+            Container(static_assets, "Static Assets", "React Build", "Compiled web application")
+        }
+        
+        Deployment_Node(app_tier, "Application Tier", "Container Orchestration") {
+            Deployment_Node(backend_cluster, "Backend Services", "Docker Containers") {
+                Container(health_api, "Health Journal API", "Node.js", "Main backend service")
+                Container(rag_service, "AI RAG Service", "Python FastAPI", "AI analysis service")
+            }
+        }
+        
+        Deployment_Node(data_tier, "Data Tier", "Managed Database Services") {
+            ContainerDb(postgres_db, "PostgreSQL", "Managed Database", "Primary health records")
+            ContainerDb(mongodb_atlas, "MongoDB Atlas", "Vector Database", "Embeddings and RAG data")
+        }
+    }
+
+    Deployment_Node(external_services, "External Services", "Third-party APIs") {
+        Container(groq_api, "Groq LLM API", "External Service", "AI language model")
+        Container(huggingface_api, "HuggingFace API", "External Service", "Embedding models")
+    }
+
+    Rel(browser, static_assets, "HTTPS", "443")
+    Rel(mobile_app, health_api, "HTTPS/REST", "443")
+    Rel(browser, health_api, "HTTPS/REST", "443")
+    
+    Rel(health_api, postgres_db, "SQL", "5432")
+    Rel(health_api, rag_service, "HTTP", "8000")
+    
+    Rel(rag_service, mongodb_atlas, "MongoDB Protocol", "27017")
+    Rel(rag_service, groq_api, "HTTPS", "443")
+    Rel(rag_service, huggingface_api, "HTTPS", "443")
+
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")

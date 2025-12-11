@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant U as User (Frontend)
+    participant B as Backend API
+    participant PG as PostgreSQL
+    
+    U->>B: POST /api/health-records
+    Note over U,B: {"symptoms": "headache", "severity": 8}
+    
+    B->>B: Validate request
+    B->>PG: INSERT health record
+    PG->>B: Return record ID
+    B->>U: {"success": true, "data": {...}}

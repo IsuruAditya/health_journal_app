@@ -1,0 +1,52 @@
+sequenceDiagram
+    participant Client as Frontend Client
+    participant Auth as Auth Middleware
+    participant Controller as HealthRecord Controller
+    participant Service as HealthRecord Service
+    participant Model as HealthRecord Model
+    participant DB as PostgreSQL
+    participant Analysis as Analysis Service
+    participant AI as AI Service
+    participant RAG as AI RAG Microservice
+
+    %% Health Record Creation
+    Client->>Controller: POST /api/health-records
+    Controller->>Auth: Verify JWT token
+    Auth-->>Controller: ✓ User authenticated
+
+    Controller->>Service: createRecord(userId, recordData)
+    Service->>Service: Validate severity (1-10)
+    Service->>Model: create(userId, recordData)
+    Model->>DB: INSERT INTO health_records
+    DB-->>Model: Return record with ID
+    Model-->>Service: HealthRecord object
+    Service-->>Controller: Created record
+    Controller-->>Client: 201 Created
+
+    %% Analysis Request
+    Client->>Controller: GET /api/analysis/123
+    Controller->>Auth: Verify JWT token
+    Auth-->>Controller: ✓ User authenticated
+
+    Controller->>Service: getRecordById(123, userId)
+    Service->>Model: findById(123, userId)
+    Model->>DB: SELECT * FROM health_records WHERE id=123
+    DB-->>Model: Record data
+    Model-->>Service: HealthRecord object
+
+    Controller->>Analysis: analyzeHealthRecord(record)
+    Analysis->>AI: analyzeHealthRecord(record)
+    
+    AI->>RAG: POST /api/v1/analyze
+    Note over AI,RAG: {"query": "Patient symptoms..."}
+    RAG-->>AI: {"analysis": "Medical analysis..."}
+    
+    AI->>AI: parseAIAnalysis(response)
+    AI-->>Analysis: HealthAnalysis object
+    Analysis-->>Controller: Analysis result
+
+    Controller->>Service: updateRecordAnalysis(123, analysis)
+    Service->>Model: updateAnalysis(123, analysis)
+    Model->>DB: UPDATE health_records SET ai_analysis=...
+    
+    Controller-->>Client: 200 OK with analysis

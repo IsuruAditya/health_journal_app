@@ -1,0 +1,41 @@
+C4Container
+    title Container Diagram - Salubro Health AI Platform
+
+    Person(user, "Patient/User", "Health tracking and AI insights")
+    Person(doctor, "Healthcare Provider", "Patient data review")
+
+    Container_Boundary(frontend, "Frontend Applications") {
+        Container(webapp, "Web Application", "React, TypeScript", "Health record management interface")
+        Container(mobile, "Mobile App", "React Native", "Mobile health tracking")
+    }
+
+    Container_Boundary(backend, "Backend Services") {
+        Container(api, "Health Journal API", "Node.js, Express, TypeScript", "REST API for health records")
+        Container(rag_service, "AI RAG Service", "Python, FastAPI", "AI analysis and recommendations")
+    }
+
+    Container_Boundary(data, "Data Layer") {
+        ContainerDb(postgres, "PostgreSQL", "Relational Database", "User accounts and structured health records")
+        ContainerDb(mongodb, "MongoDB Atlas", "Document/Vector Database", "Embeddings and RAG operations")
+    }
+
+    Container_Boundary(external, "External Services") {
+        Container(groq, "Groq LLM", "AI Service", "Language model inference")
+        Container(embeddings, "HuggingFace", "ML Models", "Text embeddings generation")
+    }
+
+    Rel(user, webapp, "Uses", "HTTPS")
+    Rel(user, mobile, "Uses", "HTTPS")
+    Rel(doctor, webapp, "Reviews", "HTTPS")
+
+    Rel(webapp, api, "API calls", "REST/JSON")
+    Rel(mobile, api, "API calls", "REST/JSON")
+
+    Rel(api, postgres, "Read/Write", "SQL")
+    Rel(api, rag_service, "Analysis requests", "HTTP/JSON")
+
+    Rel(rag_service, mongodb, "Vector search", "MongoDB Protocol")
+    Rel(rag_service, groq, "LLM calls", "HTTPS/API")
+    Rel(rag_service, embeddings, "Generate vectors", "Python SDK")
+
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
