@@ -69,19 +69,19 @@ export function HealthMetrics({ records }: HealthMetricsProps) {
   ]
 
   const colorClasses = {
-    blue: 'bg-blue-50 border-blue-200 text-blue-700',
-    green: 'bg-green-50 border-green-200 text-green-700',
-    orange: 'bg-orange-50 border-orange-200 text-orange-700',
-    red: 'bg-red-50 border-red-200 text-red-700',
-    gray: 'bg-gray-50 border-gray-200 text-gray-700'
+    blue: 'bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-400',
+    green: 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-400',
+    orange: 'bg-orange-500/10 border-orange-500/20 text-orange-700 dark:text-orange-400',
+    red: 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-400',
+    gray: 'bg-muted border-border text-muted-foreground'
   }
 
   const iconColorClasses = {
-    blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
-    orange: 'bg-orange-100 text-orange-600',
-    red: 'bg-red-100 text-red-600',
-    gray: 'bg-gray-100 text-gray-600'
+    blue: 'bg-blue-500/20 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-500/20 text-green-600 dark:text-green-400',
+    orange: 'bg-orange-500/20 text-orange-600 dark:text-orange-400',
+    red: 'bg-red-500/20 text-red-600 dark:text-red-400',
+    gray: 'bg-muted text-muted-foreground'
   }
 
   return (
@@ -99,9 +99,9 @@ export function HealthMetrics({ records }: HealthMetricsProps) {
               </div>
               {metric.trend && (
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                  metric.trend === 'increasing' ? 'bg-red-100 text-red-700' :
-                  metric.trend === 'decreasing' ? 'bg-green-100 text-green-700' :
-                  'bg-gray-100 text-gray-700'
+                  metric.trend === 'increasing' ? 'bg-red-500/10 text-red-700 dark:text-red-400' :
+                  metric.trend === 'decreasing' ? 'bg-green-500/10 text-green-700 dark:text-green-400' :
+                  'bg-muted text-muted-foreground'
                 }`}>
                   {metric.trend}
                 </span>

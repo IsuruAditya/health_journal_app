@@ -62,7 +62,7 @@ export class HealthRecordController {
     const pastRecords = userHistory.filter(r => r.id !== recordId);
     
     // Analyze with full context
-    const analysis = await AnalysisService.analyzeHealthRecord(record, pastRecords);
+    const analysis = await AnalysisService.analyzeHealthRecord(record, pastRecords, userId.toString());
     
     // Auto-save analysis to database
     await HealthRecordService.updateRecordAnalysis(recordId, analysis);
@@ -141,7 +141,7 @@ Provide:
 5. Any concerning patterns requiring medical attention`;
 
     // Get AI analysis
-    const analysis = await AnalysisService.analyzeHealthRecord(recentRecords[0], recentRecords.slice(1));
+    const analysis = await AnalysisService.analyzeHealthRecord(recentRecords[0], recentRecords.slice(1), userId.toString());
     
     const response: ApiResponse = {
       success: true,

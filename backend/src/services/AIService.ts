@@ -1,12 +1,65 @@
 import { HealthRecord, HealthAnalysis } from '@/types';
+import { rateLimiters } from '@/utils/RateLimiter';
+import { analysisCache } from '@/utils/Cache';
+import { circuitBreakers } from '@/utils/CircuitBreaker';
+import { analysisQueue, Priority } from '@/utils/Queue';
+import { metrics } from '@/utils/Metrics';
 
 export class AIService {
   private static readonly AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
-  static async analyzeHealthRecord(healthRecord: HealthRecord, userHistory?: HealthRecord[]): Promise<HealthAnalysis> {
+  static async analyzeHealthRecord(healthRecord: HealthRecord, userHistory?: HealthRecord[], userId?: string): Promise<HealthAnalysis> {
+    const startTime = Date.now();
+    metrics.recordRequest();
+
     try {
-      // Build comprehensive query with current symptoms
-      let query = `Current Symptoms Analysis:
+      // 1. Rate Limiting
+      if (userId) {
+        const userLimiter = rateLimiters.getUserLimiter(userId);
+        if (!await userLimiter.acquire()) {
+          metrics.recordRateLimitHit();
+          throw new Error('Rate limit exceeded. Please wait before making another request.');
+        }
+      }
+
+      if (!await rateLimiters.aiService.acquire()) {
+        metrics.recordRateLimitHit();
+        metrics.recordQueuedRequest();
+        // Queue the request instead of rejecting
+        return await this.queueAnalysis(healthRecord, userHistory, userId);
+      }
+      // 2. Check Cache
+      const query = this.buildQuery(healthRecord, userHistory);
+      const cached = await analysisCache.get(query);
+      if (cached) {
+        metrics.recordCacheHit();
+        metrics.recordSuccess(Date.now() - startTime);
+        return cached;
+      }
+      metrics.recordCacheMiss();
+
+      // 3. Circuit Breaker + AI Call
+      const analysis = await circuitBreakers.aiService.execute(async () => {
+        const result = await this.callAIService(query);
+        result.recordId = healthRecord.id; // Set correct recordId
+        return result;
+      });
+
+      // 4. Cache the result
+      await analysisCache.set(query, analysis, 3600000); // 1 hour TTL
+
+      metrics.recordSuccess(Date.now() - startTime);
+      return analysis;
+
+    } catch (error) {
+      metrics.recordError();
+      console.error('AI service error:', error);
+      return this.fallbackAnalysis(healthRecord);
+    }
+  }
+
+  private static buildQuery(healthRecord: HealthRecord, userHistory?: HealthRecord[]): string {
+    let query = `Current Symptoms Analysis:
 - Symptoms: ${healthRecord.symptoms}
 - Severity: ${healthRecord.severity}/10
 - Location: ${healthRecord.site}
@@ -24,49 +77,95 @@ export class AIService {
         query += `\n\nPlease analyze current symptoms in context of patient's health history. Identify patterns, trends, and potential underlying conditions.`;
       }
 
-      // Call AI microservice with RAG
-      const response = await fetch(`${this.AI_SERVICE_URL}/api/v1/analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': process.env.AI_API_KEY || 'ai-rag-demo-key-2024',
-        },
-        body: JSON.stringify({ query })
-      });
+      return query;
+  }
 
-      if (!response.ok) {
-        throw new Error(`AI service error: ${response.statusText}`);
+  private static async callAIService(query: string): Promise<HealthAnalysis> {
+    // Call AI microservice with RAG (with 2 minute timeout for fallback models)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutes
+      
+      try {
+        const response = await fetch(`${this.AI_SERVICE_URL}/api/v1/analyze`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': process.env.AI_API_KEY || 'ai-rag-demo-key-2024',
+          },
+          body: JSON.stringify({ query }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`AI service error: ${response.statusText}`);
+        }
+
+        const aiResult = await response.json() as any;
+        const analysis = aiResult.analysis || '';
+
+        // Parse and return structured analysis
+        // Extract recordId from query or use 0 as fallback
+        const recordId = 0; // Will be set by caller
+        return this.parseAnalysis(analysis, recordId);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError;
       }
+  }
 
-      const aiResult = await response.json() as any;
-      const analysis = aiResult.analysis || '';
-      
-      // Parse AI analysis with enhanced extraction
-      const clinicalAssessment = this.extractSection(analysis, ['CLINICAL ASSESSMENT']);
-      const differential = this.extractDifferentialDiagnosis(analysis);
-      const clinicalReasoning = this.extractSection(analysis, ['CLINICAL REASONING', 'REASONING']);
-      const recommendations = this.extractSection(analysis, ['RECOMMENDED EVALUATION', 'EVALUATION', 'NEXT STEPS']);
-      const redFlags = this.extractSection(analysis, ['RED FLAGS', 'SAFETY', 'EMERGENCY']);
-      const limitations = this.extractSection(analysis, ['LIMITATIONS', 'UNCERTAINTY']);
-      
-      return {
-        recordId: healthRecord.id,
-        analysisDate: new Date().toISOString(),
-        symptomSeverity: healthRecord.severity?.toString() || 'Not specified',
-        symptomPattern: clinicalAssessment.length > 0 ? clinicalAssessment : this.fallbackSymptomPattern(healthRecord),
-        riskFactors: clinicalReasoning.length > 0 ? clinicalReasoning : this.fallbackRiskFactors(healthRecord),
-        recommendations: recommendations.length > 0 ? recommendations : this.fallbackRecommendations(healthRecord),
-        trends: this.analyzeTrends(healthRecord, userHistory),
-        redFlags: redFlags.length > 0 ? redFlags : this.fallbackRedFlags(healthRecord),
-        fullAnalysis: analysis,
-        differentialDiagnosis: differential.length > 0 ? differential : ['Differential diagnosis not available']
-      };
+  private static parseAnalysis(analysis: string, recordId: number): HealthAnalysis {
+        console.log('=== AI ANALYSIS RESPONSE ===');
+        console.log(analysis);
+        console.log('=== END RESPONSE ===');
+        
+        // Parse AI analysis with enhanced extraction
+        const clinicalAssessment = this.extractSection(analysis, ['CLINICAL ASSESSMENT', 'ASSESSMENT', 'ANALYSIS']);
+        const differential = this.extractDifferentialDiagnosis(analysis);
+        const clinicalReasoning = this.extractSection(analysis, ['CLINICAL REASONING', 'REASONING', 'RATIONALE']);
+        const recommendations = this.extractSection(analysis, ['RECOMMENDED', 'RECOMMENDATION', 'EVALUATION', 'NEXT STEPS', 'ACTION']);
+        const redFlags = this.extractSection(analysis, ['RED FLAGS', 'WARNING', 'SAFETY', 'EMERGENCY', 'URGENT']);
+        
+        console.log('Parsed sections:', { 
+          clinicalAssessment: clinicalAssessment.length, 
+          differential: differential.length,
+          clinicalReasoning: clinicalReasoning.length,
+          recommendations: recommendations.length,
+          redFlags: redFlags.length
+        });
+        
+    return {
+          recordId,
+          analysisDate: new Date().toISOString(),
+          symptomSeverity: 'Not specified',
+          symptomPattern: clinicalAssessment.length > 0 ? clinicalAssessment : ['Analysis in progress'],
+          riskFactors: clinicalReasoning.length > 0 ? clinicalReasoning : ['Assessment pending'],
+          recommendations: recommendations.length > 0 ? recommendations : ['Recommendations pending'],
+          trends: { severityTrend: 'stable', frequencyTrend: 'stable' },
+          redFlags: redFlags.length > 0 ? redFlags : [],
+          fullAnalysis: analysis,
+          differentialDiagnosis: differential.length > 0 ? differential : ['Differential diagnosis not available']
+        };
+  }
 
-    } catch (error) {
-      console.error('AI service error:', error);
-      // Fallback to local analysis if AI service fails
-      return this.fallbackAnalysis(healthRecord);
-    }
+  private static async queueAnalysis(healthRecord: HealthRecord, userHistory?: HealthRecord[], userId?: string): Promise<HealthAnalysis> {
+    const priority = healthRecord.severity && healthRecord.severity >= 8 ? Priority.URGENT :
+                     healthRecord.severity && healthRecord.severity >= 5 ? Priority.HIGH :
+                     Priority.NORMAL;
+
+    return new Promise((resolve, reject) => {
+      analysisQueue.add(
+        healthRecord.id.toString(),
+        { healthRecord, userHistory, userId },
+        priority
+      ).then(() => {
+        // Process queue
+        analysisQueue.process(async (data) => {
+          const result = await this.analyzeHealthRecord(data.healthRecord, data.userHistory, data.userId);
+          resolve(result);
+        });
+      }).catch(reject);
+    });
   }
 
   // Fallback analysis methods (simplified versions)
@@ -121,8 +220,8 @@ export class AIService {
     const results: string[] = [];
     let inSection = false;
     
-    for (const line of lines) {
-      const trimmed = line.trim();
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
       const lowerLine = trimmed.toLowerCase();
       
       // Check if we're entering a relevant section
@@ -131,26 +230,36 @@ export class AIService {
         continue;
       }
       
-      // Stop at next major section (starts with **)
-      if (inSection && trimmed.startsWith('**') && !keywords.some(kw => lowerLine.includes(kw.toLowerCase()))) {
-        inSection = false;
+      // Stop at next major section (headers that DON'T match our keywords)
+      if (inSection && (trimmed.startsWith('##') || /^[A-Z][A-Z\s]+$/.test(trimmed) || /^\*\*[A-Z]/.test(trimmed))) {
+        if (!keywords.some(kw => lowerLine.includes(kw.toLowerCase()))) {
+          break;
+        }
       }
       
-      // Extract bullet points or numbered items
-      if (inSection && (trimmed.startsWith('-') || trimmed.startsWith('•') || /^\d+\./.test(trimmed))) {
-        const cleaned = trimmed.replace(/^[\s\-\*\•\d\.]+/, '').trim();
-        if (cleaned.length > 10) {
-          results.push(cleaned);
+      // Extract content
+      if (inSection && trimmed.length > 0) {
+        // Skip headers but continue in section
+        if (trimmed.startsWith('##') || (trimmed.startsWith('**') && trimmed.endsWith('**'))) continue;
+        
+        // Extract bullet points, numbered items, or plain text
+        if (trimmed.startsWith('-') || trimmed.startsWith('•') || /^\d+\./.test(trimmed)) {
+          const cleaned = trimmed.replace(/^[\s\-\*\•\d\.]+/, '').trim();
+          if (cleaned.length > 5) results.push(cleaned);
+        } else if (!/^[A-Z][A-Z\s]+$/.test(trimmed)) {
+          // Plain text paragraph (not all caps header)
+          results.push(trimmed);
         }
       }
     }
     
-    return results.slice(0, 8); // Increased to capture more details
+    return [...new Set(results)].slice(0, 10);
   }
 
   private static extractDifferentialDiagnosis(analysis: string): string[] {
     const lines = analysis.split('\n');
     const results: string[] = [];
+    const seen = new Set<string>();
     let inSection = false;
     let currentDiagnosis = '';
     
@@ -165,22 +274,44 @@ export class AIService {
       }
       
       // Stop at next major section
-      if (inSection && trimmed.startsWith('**') && !lowerLine.includes('differential')) {
-        if (currentDiagnosis) results.push(currentDiagnosis.trim());
+      if (inSection && (trimmed.startsWith('##') || (trimmed.startsWith('**') && !lowerLine.includes('differential')))) {
+        if (currentDiagnosis) {
+          const normalized = currentDiagnosis.trim();
+          if (!seen.has(normalized)) {
+            results.push(normalized);
+            seen.add(normalized);
+          }
+        }
         break;
       }
       
-      // Extract numbered diagnoses (1. MOST LIKELY:, 2. CONSIDER:, etc.)
+      // Extract numbered diagnoses
       if (inSection && /^\d+\./.test(trimmed)) {
-        if (currentDiagnosis) results.push(currentDiagnosis.trim());
+        if (currentDiagnosis) {
+          const normalized = currentDiagnosis.trim();
+          if (!seen.has(normalized)) {
+            results.push(normalized);
+            seen.add(normalized);
+          }
+        }
         currentDiagnosis = trimmed;
       } else if (inSection && trimmed.startsWith('-') && currentDiagnosis) {
-        currentDiagnosis += '\n' + trimmed;
+        // Only add first 3 supporting points to avoid bloat
+        const points = currentDiagnosis.split('\n').filter(l => l.startsWith('-'));
+        if (points.length < 3) {
+          currentDiagnosis += '\n' + trimmed;
+        }
       }
     }
     
-    if (currentDiagnosis) results.push(currentDiagnosis.trim());
-    return results;
+    if (currentDiagnosis) {
+      const normalized = currentDiagnosis.trim();
+      if (!seen.has(normalized)) {
+        results.push(normalized);
+      }
+    }
+    
+    return results.slice(0, 5); // Max 5 diagnoses
   }
 
   private static analyzeTrends(current: HealthRecord, history?: HealthRecord[]): { severityTrend: string; frequencyTrend: string } {

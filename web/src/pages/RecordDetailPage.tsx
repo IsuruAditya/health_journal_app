@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { healthRecordsApi } from '@/services/api';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import MarkdownText from '@/components/ui/MarkdownText';
 import { ArrowLeft, Brain, Calendar, Clock, MapPin, Activity, Pill, Edit, Trash2 } from 'lucide-react';
 import { formatDate, formatTime, getSeverityColor, getSeverityLabel } from '@/utils/formatters';
 import type { HealthRecord, HealthAnalysis } from '@/types';
@@ -106,8 +107,8 @@ const RecordDetailPage: React.FC = () => {
             <span>Back to Records</span>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Health Record Details</h1>
-            <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+            <h1 className="text-3xl font-bold text-foreground">Health Record Details</h1>
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
                 <span>{formatDate(record.record_date)}</span>
@@ -157,57 +158,57 @@ const RecordDetailPage: React.FC = () => {
 
       {/* SOCRATES Framework */}
       <Card>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Symptom Assessment (SOCRATES)</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Symptom Assessment (SOCRATES)</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {record.site && (
             <div className="flex items-start space-x-2">
-              <MapPin className="h-4 w-4 text-gray-400 mt-1" />
+              <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <span className="text-sm font-medium text-gray-700">Site: </span>
-                <span className="text-sm text-gray-600">{record.site}</span>
+                <span className="text-sm font-medium text-foreground">Site: </span>
+                <span className="text-sm text-muted-foreground">{record.site}</span>
               </div>
             </div>
           )}
           {record.onset && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Onset: </span>
-              <span className="text-sm text-gray-600">{record.onset}</span>
+              <span className="text-sm font-medium text-foreground">Onset: </span>
+              <span className="text-sm text-muted-foreground">{record.onset}</span>
             </div>
           )}
           {record.character && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Character: </span>
-              <span className="text-sm text-gray-600">{record.character}</span>
+              <span className="text-sm font-medium text-foreground">Character: </span>
+              <span className="text-sm text-muted-foreground">{record.character}</span>
             </div>
           )}
           {record.radiation && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Radiation: </span>
-              <span className="text-sm text-gray-600">{record.radiation}</span>
+              <span className="text-sm font-medium text-foreground">Radiation: </span>
+              <span className="text-sm text-muted-foreground">{record.radiation}</span>
             </div>
           )}
           {record.associations && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Associations: </span>
-              <span className="text-sm text-gray-600">{record.associations}</span>
+              <span className="text-sm font-medium text-foreground">Associations: </span>
+              <span className="text-sm text-muted-foreground">{record.associations}</span>
             </div>
           )}
           {record.time_course && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Time Course: </span>
-              <span className="text-sm text-gray-600">{record.time_course}</span>
+              <span className="text-sm font-medium text-foreground">Time Course: </span>
+              <span className="text-sm text-muted-foreground">{record.time_course}</span>
             </div>
           )}
           {record.exacerbating_factors && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Exacerbating: </span>
-              <span className="text-sm text-gray-600">{record.exacerbating_factors}</span>
+              <span className="text-sm font-medium text-foreground">Exacerbating: </span>
+              <span className="text-sm text-muted-foreground">{record.exacerbating_factors}</span>
             </div>
           )}
           {record.palliating_factors && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Palliating: </span>
-              <span className="text-sm text-gray-600">{record.palliating_factors}</span>
+              <span className="text-sm font-medium text-foreground">Palliating: </span>
+              <span className="text-sm text-muted-foreground">{record.palliating_factors}</span>
             </div>
           )}
         </div>
@@ -215,30 +216,30 @@ const RecordDetailPage: React.FC = () => {
 
       {/* Additional Information */}
       <Card>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Additional Information</h2>
         <div className="space-y-3">
           {record.symptoms && (
             <div className="flex items-start space-x-2">
-              <Activity className="h-4 w-4 text-gray-400 mt-1" />
+              <Activity className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <span className="text-sm font-medium text-gray-700">Symptoms: </span>
-                <span className="text-sm text-gray-600">{record.symptoms}</span>
+                <span className="text-sm font-medium text-foreground">Symptoms: </span>
+                <span className="text-sm text-muted-foreground">{record.symptoms}</span>
               </div>
             </div>
           )}
           {record.medications && (
             <div className="flex items-start space-x-2">
-              <Pill className="h-4 w-4 text-gray-400 mt-1" />
+              <Pill className="h-4 w-4 text-muted-foreground mt-1" />
               <div>
-                <span className="text-sm font-medium text-gray-700">Medications: </span>
-                <span className="text-sm text-gray-600">{record.medications}</span>
+                <span className="text-sm font-medium text-foreground">Medications: </span>
+                <span className="text-sm text-muted-foreground">{record.medications}</span>
               </div>
             </div>
           )}
           {record.diet_notes && (
             <div>
-              <span className="text-sm font-medium text-gray-700">Diet Notes: </span>
-              <span className="text-sm text-gray-600">{record.diet_notes}</span>
+              <span className="text-sm font-medium text-foreground">Diet Notes: </span>
+              <span className="text-sm text-muted-foreground">{record.diet_notes}</span>
             </div>
           )}
         </div>
@@ -247,30 +248,30 @@ const RecordDetailPage: React.FC = () => {
       {/* Vital Signs */}
       {record.vital_signs && Object.values(record.vital_signs).some(v => v) && (
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Vital Signs</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Vital Signs</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {record.vital_signs.blood_pressure && (
-              <div className="text-center p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-700">Blood Pressure</div>
-                <div className="text-lg font-semibold text-gray-900">{record.vital_signs.blood_pressure}</div>
+              <div className="text-center p-3 bg-muted rounded-md">
+                <div className="text-sm font-medium text-foreground">Blood Pressure</div>
+                <div className="text-lg font-semibold text-foreground">{record.vital_signs.blood_pressure}</div>
               </div>
             )}
             {record.vital_signs.temperature && (
-              <div className="text-center p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-700">Temperature</div>
-                <div className="text-lg font-semibold text-gray-900">{record.vital_signs.temperature}°F</div>
+              <div className="text-center p-3 bg-muted rounded-md">
+                <div className="text-sm font-medium text-foreground">Temperature</div>
+                <div className="text-lg font-semibold text-foreground">{record.vital_signs.temperature}°F</div>
               </div>
             )}
             {record.vital_signs.pulse && (
-              <div className="text-center p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-700">Pulse</div>
-                <div className="text-lg font-semibold text-gray-900">{record.vital_signs.pulse} bpm</div>
+              <div className="text-center p-3 bg-muted rounded-md">
+                <div className="text-sm font-medium text-foreground">Pulse</div>
+                <div className="text-lg font-semibold text-foreground">{record.vital_signs.pulse} bpm</div>
               </div>
             )}
             {record.vital_signs.weight && (
-              <div className="text-center p-3 bg-gray-50 rounded-md">
-                <div className="text-sm font-medium text-gray-700">Weight</div>
-                <div className="text-lg font-semibold text-gray-900">{record.vital_signs.weight} lbs</div>
+              <div className="text-center p-3 bg-muted rounded-md">
+                <div className="text-sm font-medium text-foreground">Weight</div>
+                <div className="text-lg font-semibold text-foreground">{record.vital_signs.weight} lbs</div>
               </div>
             )}
           </div>
@@ -280,8 +281,8 @@ const RecordDetailPage: React.FC = () => {
       {/* Personal Notes */}
       {record.personal_notes && (
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Personal Notes</h2>
-          <p className="text-sm text-gray-600 whitespace-pre-wrap">{record.personal_notes}</p>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Personal Notes</h2>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{record.personal_notes}</p>
         </Card>
       )}
 
@@ -290,15 +291,15 @@ const RecordDetailPage: React.FC = () => {
         <div className="space-y-6">
           {/* Differential Diagnosis - Most Important */}
           {analysis.differentialDiagnosis && analysis.differentialDiagnosis.length > 0 && (
-            <Card className="border-l-4 border-l-blue-500">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <Brain className="h-5 w-5 text-blue-600" />
+            <Card className="border-l-4 border-l-primary">
+              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
                 Differential Diagnosis
               </h2>
               <div className="space-y-3">
                 {analysis.differentialDiagnosis.map((diagnosis, idx) => (
-                  <div key={idx} className="text-sm text-gray-700 whitespace-pre-wrap bg-blue-50 p-3 rounded-lg">
-                    {diagnosis}
+                  <div key={idx} className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+                    <MarkdownText text={diagnosis} className="text-sm text-foreground leading-relaxed" />
                   </div>
                 ))}
               </div>
@@ -307,14 +308,17 @@ const RecordDetailPage: React.FC = () => {
 
           {/* Clinical Assessment & Recommendations */}
           <Card>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Clinical Assessment</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Clinical Assessment</h2>
             <div className="space-y-4">
               {analysis.symptomPattern.length > 0 && (
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Assessment</h3>
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <h3 className="font-medium text-foreground mb-2">Assessment</h3>
+                  <ul className="space-y-2">
                     {analysis.symptomPattern.map((pattern, idx) => (
-                      <li key={idx}>{pattern}</li>
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <MarkdownText text={pattern} className="text-sm text-foreground flex-1" />
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -322,33 +326,42 @@ const RecordDetailPage: React.FC = () => {
               
               {analysis.riskFactors.length > 0 && (
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">Clinical Reasoning</h3>
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <h3 className="font-medium text-foreground mb-2">Clinical Reasoning</h3>
+                  <ul className="space-y-2">
                     {analysis.riskFactors.map((risk, idx) => (
-                      <li key={idx}>{risk}</li>
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <MarkdownText text={risk} className="text-sm text-foreground flex-1" />
+                      </li>
                     ))}
                   </ul>
                 </div>
               )}
 
               <div>
-                <h3 className="font-medium text-gray-900 mb-2">Recommended Actions</h3>
-                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                <h3 className="font-medium text-foreground mb-2">Recommended Actions</h3>
+                <ul className="space-y-2">
                   {analysis.recommendations.map((rec, idx) => (
-                    <li key={idx}>{rec}</li>
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <MarkdownText text={rec} className="text-sm text-foreground flex-1" />
+                    </li>
                   ))}
                 </ul>
               </div>
               
               {analysis.redFlags.length > 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <h3 className="font-medium text-red-700 mb-2 flex items-center gap-2">
+                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+                  <h3 className="font-medium text-destructive mb-2 flex items-center gap-2">
                     <Activity className="h-4 w-4" />
                     Safety Information
                   </h3>
-                  <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
+                  <ul className="space-y-2">
                     {analysis.redFlags.map((flag, idx) => (
-                      <li key={idx}>{flag}</li>
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-destructive mt-1">•</span>
+                        <MarkdownText text={flag} className="text-sm text-destructive flex-1" />
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -361,14 +374,14 @@ const RecordDetailPage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
+          <div className="bg-card rounded-xl max-w-md w-full p-6 shadow-xl border border-border">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <Trash2 className="h-5 w-5 text-red-600" />
+              <div className="p-2 bg-destructive/10 rounded-lg">
+                <Trash2 className="h-5 w-5 text-destructive" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Delete Health Record</h3>
+              <h3 className="text-lg font-semibold text-foreground">Delete Health Record</h3>
             </div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Are you sure you want to delete this health record? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">

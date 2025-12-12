@@ -14,92 +14,104 @@ interface HealthRecordCardProps {
 const HealthRecordCard: React.FC<HealthRecordCardProps> = ({ record, onAnalyze }) => {
   const navigate = useNavigate();
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 hover:border-blue-200">
-      <div className="flex justify-between items-start mb-6">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg">
-            <Calendar className="h-4 w-4" />
+    <Card hover className="cursor-pointer" onClick={() => navigate(`/records/${record.id}`)}>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2.5 py-1 rounded-md">
+            <Calendar className="h-3.5 w-3.5" />
             <span className="font-medium">{formatDate(record.record_date)}</span>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg">
-            <Clock className="h-4 w-4" />
+          <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted px-2.5 py-1 rounded-md">
+            <Clock className="h-3.5 w-3.5" />
             <span className="font-medium">{formatTime(record.record_time)}</span>
           </div>
+          {record.ai_analysis && (
+            <div className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400 bg-green-500/10 px-2.5 py-1 rounded-md">
+              <CheckCircle className="h-3.5 w-3.5" />
+              <span className="font-medium">Analyzed</span>
+            </div>
+          )}
         </div>
         
         {record.severity && (
-          <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${getSeverityColor(record.severity)}`}>
-            {getSeverityLabel(record.severity)} ({record.severity}/10)
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getSeverityColor(record.severity)}`}>
+            {getSeverityLabel(record.severity)} {record.severity}/10
           </span>
         )}
       </div>
 
-      <div className="space-y-3">
+      {/* Content */}
+      <div className="space-y-2.5">
         {record.site && (
-          <div className="flex items-start space-x-2">
-            <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div>
-              <span className="text-sm font-medium text-gray-700">Location: </span>
-              <span className="text-sm text-gray-600">{record.site}</span>
+          <div className="flex items-start gap-2">
+            <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-medium text-foreground">Location: </span>
+              <span className="text-sm text-muted-foreground">{record.site}</span>
             </div>
           </div>
         )}
 
         {record.character && (
-          <div className="flex items-start space-x-2">
-            <Activity className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div>
-              <span className="text-sm font-medium text-gray-700">Description: </span>
-              <span className="text-sm text-gray-600">{record.character}</span>
+          <div className="flex items-start gap-2">
+            <Activity className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-medium text-foreground">Description: </span>
+              <span className="text-sm text-muted-foreground">{record.character}</span>
             </div>
           </div>
         )}
 
         {record.symptoms && (
-          <div className="flex items-start space-x-2">
-            <Activity className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div>
-              <span className="text-sm font-medium text-gray-700">Symptoms: </span>
-              <span className="text-sm text-gray-600">{record.symptoms}</span>
+          <div className="flex items-start gap-2">
+            <Activity className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-medium text-foreground">Symptoms: </span>
+              <span className="text-sm text-muted-foreground line-clamp-2">{record.symptoms}</span>
             </div>
           </div>
         )}
 
         {record.medications && (
-          <div className="flex items-start space-x-2">
-            <Pill className="h-4 w-4 text-gray-400 mt-0.5" />
-            <div>
-              <span className="text-sm font-medium text-gray-700">Medications: </span>
-              <span className="text-sm text-gray-600">{record.medications}</span>
+          <div className="flex items-start gap-2">
+            <Pill className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-medium text-foreground">Medications: </span>
+              <span className="text-sm text-muted-foreground">{record.medications}</span>
             </div>
           </div>
         )}
 
         {record.vital_signs && Object.values(record.vital_signs).some(v => v) && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
-            <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-              <Activity className="h-4 w-4 text-blue-600" />
+          <div className="mt-3 bg-primary/5 p-3 rounded-lg border border-primary/10">
+            <h4 className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
+              <Activity className="h-3.5 w-3.5 text-primary" />
               Vital Signs
             </h4>
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-2 gap-2 text-xs">
               {record.vital_signs.blood_pressure && (
-                <div className="bg-white/60 px-2 py-1 rounded-lg">
-                  <span className="font-medium text-gray-700">BP: {record.vital_signs.blood_pressure}</span>
+                <div className="bg-background/60 px-2 py-1.5 rounded">
+                  <span className="text-muted-foreground">BP:</span>
+                  <span className="ml-1 font-medium text-foreground">{record.vital_signs.blood_pressure}</span>
                 </div>
               )}
               {record.vital_signs.temperature && (
-                <div className="bg-white/60 px-2 py-1 rounded-lg">
-                  <span className="font-medium text-gray-700">Temp: {record.vital_signs.temperature}°F</span>
+                <div className="bg-background/60 px-2 py-1.5 rounded">
+                  <span className="text-muted-foreground">Temp:</span>
+                  <span className="ml-1 font-medium text-foreground">{record.vital_signs.temperature}°F</span>
                 </div>
               )}
               {record.vital_signs.pulse && (
-                <div className="bg-white/60 px-2 py-1 rounded-lg">
-                  <span className="font-medium text-gray-700">Pulse: {record.vital_signs.pulse} bpm</span>
+                <div className="bg-background/60 px-2 py-1.5 rounded">
+                  <span className="text-muted-foreground">Pulse:</span>
+                  <span className="ml-1 font-medium text-foreground">{record.vital_signs.pulse} bpm</span>
                 </div>
               )}
               {record.vital_signs.weight && (
-                <div className="bg-white/60 px-2 py-1 rounded-lg">
-                  <span className="font-medium text-gray-700">Weight: {record.vital_signs.weight} lbs</span>
+                <div className="bg-background/60 px-2 py-1.5 rounded">
+                  <span className="text-muted-foreground">Weight:</span>
+                  <span className="ml-1 font-medium text-foreground">{record.vital_signs.weight} lbs</span>
                 </div>
               )}
             </div>
@@ -107,34 +119,22 @@ const HealthRecordCard: React.FC<HealthRecordCardProps> = ({ record, onAnalyze }
         )}
       </div>
 
-      <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => navigate(`/records/${record.id}`)}
-        >
-          View Details
-        </Button>
-        
-        {onAnalyze && (
-          <div className="flex items-center gap-2">
-            {record.ai_analysis && (
-              <span className="text-xs text-green-600 flex items-center gap-1">
-                <CheckCircle className="h-3 w-3" />
-                Analyzed
-              </span>
-            )}
-            <Button
-              size="sm"
-              onClick={() => onAnalyze(record.id)}
-              className="flex items-center space-x-1"
-            >
-              <Brain className="h-4 w-4" />
-              <span>{record.ai_analysis ? 'Re-analyze' : 'AI Analysis'}</span>
-            </Button>
-          </div>
-        )}
-      </div>
+      {/* Actions */}
+      {onAnalyze && (
+        <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-border">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAnalyze(record.id);
+            }}
+          >
+            <Brain className="h-4 w-4" />
+            <span>{record.ai_analysis ? 'Re-analyze' : 'Analyze'}</span>
+          </Button>
+        </div>
+      )}
     </Card>
   );
 };

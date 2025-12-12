@@ -86,14 +86,14 @@ const NewRecordPage: React.FC = () => {
           <span>Back</span>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">New Health Record</h1>
-          <p className="text-gray-600 mt-1">Record your health information</p>
+          <h1 className="text-3xl font-bold text-foreground">New Health Record</h1>
+          <p className="text-muted-foreground mt-1">Record your health information</p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
-          <svg className="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-center gap-2">
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
           {error}
@@ -103,7 +103,7 @@ const NewRecordPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Date"
@@ -124,7 +124,7 @@ const NewRecordPage: React.FC = () => {
 
         {/* SOCRATES Framework */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Symptom Details (SOCRATES)</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Symptom Details (SOCRATES)</h2>
           <div className="space-y-4">
             <Input
               label="Site (Where is the problem?)"
@@ -169,19 +169,19 @@ const NewRecordPage: React.FC = () => {
               placeholder="e.g., movement, eating, stress"
             />
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-900">
+              <label className="block text-sm font-medium text-foreground">
                 Severity (1-10 scale)
               </label>
-              <div className="px-4 py-3 bg-gray-50 rounded-lg">
+              <div className="px-4 py-3 bg-muted rounded-lg">
                 <input
                   type="range"
                   min="1"
                   max="10"
                   value={formData.severity}
                   onChange={(e) => handleInputChange('severity', parseInt(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                  className="w-full h-2 bg-muted-foreground/20 rounded-lg appearance-none cursor-pointer slider"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                <div className="flex justify-between text-xs text-muted-foreground mt-2">
                   <span>1 (Mild)</span>
                   <span className={`font-semibold px-2 py-1 rounded-full text-xs ${
                     (formData.severity || 0) >= 8 ? 'bg-red-100 text-red-700' :
@@ -200,7 +200,7 @@ const NewRecordPage: React.FC = () => {
 
         {/* Additional Information */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Additional Information</h2>
           <div className="space-y-4">
             <Input
               label="Palliating Factors (What makes it better?)"
@@ -231,7 +231,7 @@ const NewRecordPage: React.FC = () => {
 
         {/* Vital Signs */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Vital Signs</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Vital Signs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Blood Pressure"
@@ -262,9 +262,9 @@ const NewRecordPage: React.FC = () => {
 
         {/* Personal Notes */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Personal Notes</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Personal Notes</h2>
           <textarea
-            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder:text-gray-400 resize-none"
+            className="w-full px-3 py-2.5 bg-background text-foreground border border-input rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors placeholder:text-muted-foreground resize-none"
             rows={4}
             value={formData.personal_notes || ''}
             onChange={(e) => handleInputChange('personal_notes', e.target.value)}
@@ -273,7 +273,7 @@ const NewRecordPage: React.FC = () => {
         </Card>
 
         {/* Submit Button */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 -mx-6 -mb-6 rounded-b-xl">
+        <div className="sticky bottom-0 bg-card border-t border-border p-6 -mx-6 -mb-6 rounded-b-xl">
           <div className="flex justify-end space-x-4">
             <Button
               type="button"

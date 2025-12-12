@@ -59,19 +59,19 @@ const DashboardPage: React.FC = () => {
       <div className="space-y-8">
         <div className="flex justify-between items-center">
           <div>
-            <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mt-2"></div>
+            <div className="h-8 w-48 bg-muted rounded animate-pulse"></div>
+            <div className="h-4 w-32 bg-muted rounded animate-pulse mt-2"></div>
           </div>
-          <div className="h-10 w-32 bg-gray-200 rounded-lg animate-pulse"></div>
+          <div className="h-10 w-32 bg-muted rounded-lg animate-pulse"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => (
-            <div key={i} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div key={i} className="bg-card p-6 rounded-xl border border-border shadow-sm">
               <div className="flex items-center">
-                <div className="h-12 w-12 bg-gray-200 rounded-xl animate-pulse"></div>
+                <div className="h-12 w-12 bg-muted rounded-xl animate-pulse"></div>
                 <div className="ml-4 space-y-2">
-                  <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-6 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-24 bg-muted rounded animate-pulse"></div>
+                  <div className="h-6 w-16 bg-muted rounded animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -85,17 +85,18 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Track your health journey</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Track your health journey</p>
         </div>
         <Button 
-          className="flex items-center space-x-2"
+          size="lg"
           onClick={() => navigate('/records/new')}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-5 w-5" />
           <span>New Record</span>
         </Button>
       </div>
@@ -110,36 +111,37 @@ const DashboardPage: React.FC = () => {
 
       {/* Recent Records */}
       <div>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Recent Records</h2>
-          <Link to="/records" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground">Recent Records</h2>
+          <Link to="/records" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
             View all →
           </Link>
         </div>
         
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md">
             {error}
           </div>
         )}
         
         {recentRecords.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="p-4 bg-gray-100 rounded-full w-20 h-20 mx-auto flex items-center justify-center">
-              <Activity className="h-8 w-8 text-gray-400" />
+          <div className="text-center py-12 sm:py-16 bg-card rounded-xl border border-border shadow-sm">
+            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full mb-4">
+              <Activity className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
             </div>
-            <h3 className="mt-6 text-lg font-semibold text-gray-900">No health records yet</h3>
-            <p className="mt-2 text-gray-500 max-w-sm mx-auto">Start tracking your health journey by creating your first record.</p>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">No health records yet</h3>
+            <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto px-4">Start tracking your health journey by creating your first record.</p>
             <Button 
+              size="lg"
               className="mt-6"
               onClick={() => navigate('/records/new')}
             >
-              <Plus className="h-4 w-4" />
-              Create First Record
+              <Plus className="h-5 w-5" />
+              <span>Create First Record</span>
             </Button>
           </div>
         ) : (
-          <div className="grid gap-6">
+          <div className="space-y-4">
             {recentRecords.map((record) => (
               <HealthRecordCard
                 key={record.id}
