@@ -10,6 +10,7 @@ import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useToast } from '@/hooks/useToast';
 import AnalysisModal from '@/components/AnalysisModal';
 import { HealthMetrics } from '@/components/HealthMetrics';
+import OverallHealthSummary from '@/components/OverallHealthSummary';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -98,6 +99,11 @@ const DashboardPage: React.FC = () => {
           <span>New Record</span>
         </Button>
       </div>
+
+      {/* Overall Health Summary */}
+      {records.length > 0 && (
+        <OverallHealthSummary onViewDetails={() => {/* TODO: Navigate to detailed analysis page */}} />
+      )}
 
       {/* Health Metrics */}
       <HealthMetrics records={records} />

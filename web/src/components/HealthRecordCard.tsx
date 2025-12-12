@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { formatDate, formatTime, getSeverityColor, getSeverityLabel } from '@/utils/formatters';
-import { Calendar, Clock, MapPin, Activity, Pill, Brain } from 'lucide-react';
+import { Calendar, Clock, MapPin, Activity, Pill, Brain, CheckCircle } from 'lucide-react';
 import type { HealthRecord } from '@/types';
 
 interface HealthRecordCardProps {
@@ -117,14 +117,22 @@ const HealthRecordCard: React.FC<HealthRecordCardProps> = ({ record, onAnalyze }
         </Button>
         
         {onAnalyze && (
-          <Button
-            size="sm"
-            onClick={() => onAnalyze(record.id)}
-            className="flex items-center space-x-1"
-          >
-            <Brain className="h-4 w-4" />
-            <span>AI Analysis</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            {record.ai_analysis && (
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                Analyzed
+              </span>
+            )}
+            <Button
+              size="sm"
+              onClick={() => onAnalyze(record.id)}
+              className="flex items-center space-x-1"
+            >
+              <Brain className="h-4 w-4" />
+              <span>{record.ai_analysis ? 'Re-analyze' : 'AI Analysis'}</span>
+            </Button>
+          </div>
         )}
       </div>
     </Card>

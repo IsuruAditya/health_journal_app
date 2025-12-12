@@ -2,9 +2,9 @@ import { HealthRecord, HealthAnalysis } from '@/types';
 import { AIService } from './AIService';
 
 export class AnalysisService {
-  static async analyzeHealthRecord(healthRecord: HealthRecord): Promise<HealthAnalysis> {
-    // Use AI microservice for analysis
-    return await AIService.analyzeHealthRecord(healthRecord);
+  static async analyzeHealthRecord(healthRecord: HealthRecord, userHistory?: HealthRecord[]): Promise<HealthAnalysis> {
+    // Use AI microservice for analysis with full health history
+    return await AIService.analyzeHealthRecord(healthRecord, userHistory);
   }
 
   private static analyzeSymptomPattern(record: HealthRecord): string[] {

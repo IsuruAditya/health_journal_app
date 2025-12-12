@@ -3,36 +3,35 @@ import { HealthRecord, HealthAnalysis } from '@/types';
 export class AIService {
   private static readonly AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
-  static async analyzeHealthRecord(healthRecord: HealthRecord): Promise<HealthAnalysis> {
+  static async analyzeHealthRecord(healthRecord: HealthRecord, userHistory?: HealthRecord[]): Promise<HealthAnalysis> {
     try {
-      // Prepare data for AI microservice
-      const analysisData = {
-        record_id: healthRecord.id,
-        symptoms: healthRecord.symptoms,
-        severity: healthRecord.severity,
-        character: healthRecord.character,
-        site: healthRecord.site,
-        onset: healthRecord.onset,
-        medications: healthRecord.medications,
-        vital_signs: healthRecord.vital_signs,
-        medical_history: {
-          associations: healthRecord.associations,
-          time_course: healthRecord.time_course,
-          exacerbating_factors: healthRecord.exacerbating_factors,
-          palliating_factors: healthRecord.palliating_factors
-        }
-      };
+      // Build comprehensive query with current symptoms
+      let query = `Current Symptoms Analysis:
+- Symptoms: ${healthRecord.symptoms}
+- Severity: ${healthRecord.severity}/10
+- Location: ${healthRecord.site}
+- Character: ${healthRecord.character}
+- Onset: ${healthRecord.onset}
+- Medications: ${healthRecord.medications || 'None'}
+- Vital Signs: ${healthRecord.vital_signs || 'Not recorded'}`;
 
-      // Call AI microservice
+      // Add historical context if available
+      if (userHistory && userHistory.length > 0) {
+        query += `\n\nPrevious Health Records (for pattern analysis):\n`;
+        userHistory.slice(0, 5).forEach((record, idx) => {
+          query += `\n${idx + 1}. [${record.record_date}] ${record.symptoms} (Severity: ${record.severity}/10, Site: ${record.site})`;
+        });
+        query += `\n\nPlease analyze current symptoms in context of patient's health history. Identify patterns, trends, and potential underlying conditions.`;
+      }
+
+      // Call AI microservice with RAG
       const response = await fetch(`${this.AI_SERVICE_URL}/api/v1/analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-API-Key': process.env.AI_API_KEY || 'ai-rag-demo-key-2024',
         },
-        body: JSON.stringify({
-          query: `Patient: ${healthRecord.symptoms}. Severity: ${healthRecord.severity}. Character: ${healthRecord.character}. Site: ${healthRecord.site}. Onset: ${healthRecord.onset}. Medications: ${healthRecord.medications}`
-        })
+        body: JSON.stringify({ query })
       });
 
       if (!response.ok) {
@@ -42,21 +41,25 @@ export class AIService {
       const aiResult = await response.json() as any;
       const analysis = aiResult.analysis || '';
       
-      // Parse AI analysis text to extract structured data
-      const symptomPattern = this.extractFromAnalysis(analysis, 'symptom', healthRecord);
-      const riskFactors = this.extractFromAnalysis(analysis, 'risk', healthRecord);
-      const recommendations = this.extractFromAnalysis(analysis, 'recommend', healthRecord);
-      const redFlags = this.extractFromAnalysis(analysis, 'red flag', healthRecord);
+      // Parse AI analysis with enhanced extraction
+      const clinicalAssessment = this.extractSection(analysis, ['CLINICAL ASSESSMENT']);
+      const differential = this.extractDifferentialDiagnosis(analysis);
+      const clinicalReasoning = this.extractSection(analysis, ['CLINICAL REASONING', 'REASONING']);
+      const recommendations = this.extractSection(analysis, ['RECOMMENDED EVALUATION', 'EVALUATION', 'NEXT STEPS']);
+      const redFlags = this.extractSection(analysis, ['RED FLAGS', 'SAFETY', 'EMERGENCY']);
+      const limitations = this.extractSection(analysis, ['LIMITATIONS', 'UNCERTAINTY']);
       
       return {
         recordId: healthRecord.id,
         analysisDate: new Date().toISOString(),
         symptomSeverity: healthRecord.severity?.toString() || 'Not specified',
-        symptomPattern: symptomPattern.length > 0 ? symptomPattern : this.fallbackSymptomPattern(healthRecord),
-        riskFactors: riskFactors.length > 0 ? riskFactors : this.fallbackRiskFactors(healthRecord),
+        symptomPattern: clinicalAssessment.length > 0 ? clinicalAssessment : this.fallbackSymptomPattern(healthRecord),
+        riskFactors: clinicalReasoning.length > 0 ? clinicalReasoning : this.fallbackRiskFactors(healthRecord),
         recommendations: recommendations.length > 0 ? recommendations : this.fallbackRecommendations(healthRecord),
-        trends: { severityTrend: 'stable', frequencyTrend: 'stable' },
-        redFlags: redFlags.length > 0 ? redFlags : this.fallbackRedFlags(healthRecord)
+        trends: this.analyzeTrends(healthRecord, userHistory),
+        redFlags: redFlags.length > 0 ? redFlags : this.fallbackRedFlags(healthRecord),
+        fullAnalysis: analysis,
+        differentialDiagnosis: differential.length > 0 ? differential : ['Differential diagnosis not available']
       };
 
     } catch (error) {
@@ -113,20 +116,96 @@ export class AIService {
     return redFlags;
   }
 
-  private static extractFromAnalysis(analysis: string, keyword: string, record: HealthRecord): string[] {
+  private static extractSection(analysis: string, keywords: string[]): string[] {
     const lines = analysis.split('\n');
     const results: string[] = [];
+    let inSection = false;
     
     for (const line of lines) {
-      const lowerLine = line.toLowerCase();
-      if (lowerLine.includes(keyword)) {
-        const cleaned = line.replace(/^[\s\-\*\•]+/, '').trim();
-        if (cleaned.length > 0) {
+      const trimmed = line.trim();
+      const lowerLine = trimmed.toLowerCase();
+      
+      // Check if we're entering a relevant section
+      if (keywords.some(kw => lowerLine.includes(kw.toLowerCase()))) {
+        inSection = true;
+        continue;
+      }
+      
+      // Stop at next major section (starts with **)
+      if (inSection && trimmed.startsWith('**') && !keywords.some(kw => lowerLine.includes(kw.toLowerCase()))) {
+        inSection = false;
+      }
+      
+      // Extract bullet points or numbered items
+      if (inSection && (trimmed.startsWith('-') || trimmed.startsWith('•') || /^\d+\./.test(trimmed))) {
+        const cleaned = trimmed.replace(/^[\s\-\*\•\d\.]+/, '').trim();
+        if (cleaned.length > 10) {
           results.push(cleaned);
         }
       }
     }
     
+    return results.slice(0, 8); // Increased to capture more details
+  }
+
+  private static extractDifferentialDiagnosis(analysis: string): string[] {
+    const lines = analysis.split('\n');
+    const results: string[] = [];
+    let inSection = false;
+    let currentDiagnosis = '';
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      const lowerLine = trimmed.toLowerCase();
+      
+      // Check if we're in differential diagnosis section
+      if (lowerLine.includes('differential diagnosis')) {
+        inSection = true;
+        continue;
+      }
+      
+      // Stop at next major section
+      if (inSection && trimmed.startsWith('**') && !lowerLine.includes('differential')) {
+        if (currentDiagnosis) results.push(currentDiagnosis.trim());
+        break;
+      }
+      
+      // Extract numbered diagnoses (1. MOST LIKELY:, 2. CONSIDER:, etc.)
+      if (inSection && /^\d+\./.test(trimmed)) {
+        if (currentDiagnosis) results.push(currentDiagnosis.trim());
+        currentDiagnosis = trimmed;
+      } else if (inSection && trimmed.startsWith('-') && currentDiagnosis) {
+        currentDiagnosis += '\n' + trimmed;
+      }
+    }
+    
+    if (currentDiagnosis) results.push(currentDiagnosis.trim());
     return results;
+  }
+
+  private static analyzeTrends(current: HealthRecord, history?: HealthRecord[]): { severityTrend: string; frequencyTrend: string } {
+    if (!history || history.length < 2) {
+      return { severityTrend: 'insufficient data', frequencyTrend: 'insufficient data' };
+    }
+
+    // Analyze severity trend
+    const recentSeverities = history.slice(0, 3).map(r => r.severity || 0);
+    const avgRecent = recentSeverities.reduce((a, b) => a + b, 0) / recentSeverities.length;
+    const currentSeverity = current.severity || 0;
+    
+    let severityTrend = 'stable';
+    if (currentSeverity > avgRecent + 2) severityTrend = 'worsening';
+    else if (currentSeverity < avgRecent - 2) severityTrend = 'improving';
+
+    // Analyze frequency (records in last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recentRecords = history.filter(r => new Date(r.record_date) > thirtyDaysAgo);
+    
+    let frequencyTrend = 'stable';
+    if (recentRecords.length > 5) frequencyTrend = 'increasing';
+    else if (recentRecords.length < 2) frequencyTrend = 'decreasing';
+
+    return { severityTrend, frequencyTrend };
   }
 }

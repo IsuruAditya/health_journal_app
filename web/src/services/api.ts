@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 120000, // 2 minutes for AI analysis
   headers: {
     'Content-Type': 'application/json',
   },
@@ -123,6 +124,11 @@ export const healthRecordsApi = {
 
   deleteRecord: async (id: number): Promise<void> => {
     await api.delete(`/health-records/${id}`);
+  },
+
+  getOverallAnalysis: async (): Promise<HealthAnalysis & { totalRecords: number; dateRange: any }> => {
+    const response = await api.get<ApiResponse<any>>('/health-records/analysis/overall');
+    return response.data.data!;
   },
 };
 

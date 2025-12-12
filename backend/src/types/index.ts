@@ -100,4 +100,6 @@ export interface HealthAnalysis {
     frequencyTrend: string;
   };
   redFlags: string[];
+  fullAnalysis?: string;
+  differentialDiagnosis?: string[];
 }

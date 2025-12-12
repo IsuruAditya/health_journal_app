@@ -54,10 +54,17 @@ export class HealthRecordController {
     const userId = req.user!.id;
     const recordId = parseInt(req.params.recordId);
     
+    // Get current record and user's health history
     const record = await HealthRecordService.getRecordById(recordId, userId);
-    const analysis = await AnalysisService.analyzeHealthRecord(record);
+    const userHistory = await HealthRecordService.getUserRecords(userId, 10); // Last 10 records
     
-    // Optionally save analysis to database
+    // Filter out current record from history
+    const pastRecords = userHistory.filter(r => r.id !== recordId);
+    
+    // Analyze with full context
+    const analysis = await AnalysisService.analyzeHealthRecord(record, pastRecords);
+    
+    // Auto-save analysis to database
     await HealthRecordService.updateRecordAnalysis(recordId, analysis);
     
     const response: ApiResponse = {
@@ -94,6 +101,59 @@ export class HealthRecordController {
     const response: ApiResponse = {
       success: true,
       message: 'Health record deleted successfully'
+    };
+    
+    res.json(response);
+  });
+
+  static getOverallAnalysis = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!.id;
+    
+    // Get all user records
+    const records = await HealthRecordService.getUserRecords(userId, 20);
+    
+    if (records.length === 0) {
+      const response: ApiResponse = {
+        success: true,
+        data: {
+          summary: 'No health records available for analysis',
+          totalRecords: 0,
+          trends: { severityTrend: 'N/A', frequencyTrend: 'N/A' }
+        },
+        message: 'No records found'
+      };
+      res.json(response);
+      return;
+    }
+
+    // Create summary query for AI
+    const recentRecords = records.slice(0, 10);
+    const query = `Overall Health Summary Analysis:
+
+Patient has ${records.length} health records. Recent symptoms:
+${recentRecords.map((r, i) => `${i + 1}. [${r.record_date}] ${r.symptoms} (Severity: ${r.severity}/10, Site: ${r.site})`).join('\n')}
+
+Provide:
+1. Overall health pattern analysis
+2. Recurring symptoms or conditions
+3. Severity trends over time
+4. Key recommendations for long-term health management
+5. Any concerning patterns requiring medical attention`;
+
+    // Get AI analysis
+    const analysis = await AnalysisService.analyzeHealthRecord(recentRecords[0], recentRecords.slice(1));
+    
+    const response: ApiResponse = {
+      success: true,
+      data: {
+        ...analysis,
+        totalRecords: records.length,
+        dateRange: {
+          earliest: records[records.length - 1]?.record_date,
+          latest: records[0]?.record_date
+        }
+      },
+      message: 'Overall health analysis completed'
     };
     
     res.json(response);
