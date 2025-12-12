@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { healthRecordsApi } from '@/services/api';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
-import { ArrowLeft, Brain, Calendar, Clock, MapPin, Activity, Pill, Edit } from 'lucide-react';
-import { formatDate, formatTime, getSeverityColor, getSeverityLabel } from '@/lib/utils';
+import { ArrowLeft, Brain, Calendar, Clock, MapPin, Activity, Pill, Edit, Trash2 } from 'lucide-react';
+import { formatDate, formatTime, getSeverityColor, getSeverityLabel } from '@/utils/formatters';
 import type { HealthRecord, HealthAnalysis } from '@/types';
 
 const RecordDetailPage: React.FC = () => {
@@ -14,7 +14,9 @@ const RecordDetailPage: React.FC = () => {
   const [analysis, setAnalysis] = useState<HealthAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -47,6 +49,22 @@ const RecordDetailPage: React.FC = () => {
       setError('Failed to generate AI analysis');
     } finally {
       setAnalysisLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!record) return;
+    
+    setDeleteLoading(true);
+    try {
+      await healthRecordsApi.deleteRecord(record.id);
+      navigate('/records');
+    } catch (err) {
+      console.error('Delete failed:', err);
+      setError('Failed to delete record');
+    } finally {
+      setDeleteLoading(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -98,15 +116,21 @@ const RecordDetailPage: React.FC = () => {
           <Button
             variant="outline"
             onClick={() => navigate(`/records/${record.id}/edit`)}
-            className="flex items-center space-x-2"
           >
             <Edit className="h-4 w-4" />
             <span>Edit</span>
           </Button>
           <Button
+            variant="outline"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-300"
+          >
+            <Trash2 className="h-4 w-4" />
+            <span>Delete</span>
+          </Button>
+          <Button
             onClick={handleAnalyze}
             loading={analysisLoading}
-            className="flex items-center space-x-2"
           >
             <Brain className="h-4 w-4" />
             <span>AI Analysis</span>
@@ -301,6 +325,39 @@ const RecordDetailPage: React.FC = () => {
             )}
           </div>
         </Card>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <Trash2 className="h-5 w-5 text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Delete Health Record</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this health record? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleteLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDelete}
+                loading={deleteLoading}
+                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              >
+                Delete Record
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

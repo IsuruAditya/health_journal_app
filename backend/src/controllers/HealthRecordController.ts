@@ -68,4 +68,34 @@ export class HealthRecordController {
     
     res.json(response);
   });
+
+  static updateRecord = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!.id;
+    const recordId = parseInt(req.params.id);
+    const recordData: CreateHealthRecordDto = req.body;
+    
+    const record = await HealthRecordService.updateRecord(recordId, userId, recordData);
+    
+    const response: ApiResponse = {
+      success: true,
+      data: record,
+      message: 'Health record updated successfully'
+    };
+    
+    res.json(response);
+  });
+
+  static deleteRecord = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!.id;
+    const recordId = parseInt(req.params.id);
+    
+    await HealthRecordService.deleteRecord(recordId, userId);
+    
+    const response: ApiResponse = {
+      success: true,
+      message: 'Health record deleted successfully'
+    };
+    
+    res.json(response);
+  });
 }

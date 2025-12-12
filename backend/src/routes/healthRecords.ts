@@ -11,5 +11,7 @@ router.use(authMiddleware);
 router.post('/', validateRequest(healthRecordSchema), HealthRecordController.createRecord);
 router.get('/', HealthRecordController.getRecords);
 router.get('/:id', HealthRecordController.getRecord);
+router.put('/:id', validateRequest(healthRecordSchema), HealthRecordController.updateRecord);
+router.delete('/:id', HealthRecordController.deleteRecord);
 
 export default router;

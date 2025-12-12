@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import routes from '@/routes';
 import { errorHandler, notFoundHandler } from '@/middleware/errorHandler';
+import { requestLogger } from '@/middleware/logger';
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +22,9 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Request logging - Industry standard
+app.use(requestLogger);
 
 // API routes
 app.use('/api', routes);
