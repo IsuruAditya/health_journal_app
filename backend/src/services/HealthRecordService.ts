@@ -1,5 +1,5 @@
-import { HealthRecordModel } from '@/models/HealthRecord';
-import { CreateHealthRecordDto, HealthRecord } from '@/types';
+import { HealthRecordModel } from '../models/HealthRecord';
+import { CreateHealthRecordDto, HealthRecord } from '../types';
 import { aiServiceClient } from './AIServiceClient';
 
 export class HealthRecordService {

@@ -1,5 +1,5 @@
-import { pool } from '@/config/database';
-import { HealthRecord, CreateHealthRecordDto } from '@/types';
+import { pool } from '../config/database';
+import { HealthRecord, CreateHealthRecordDto } from '../types';
 
 export class HealthRecordModel {
   static async create(userId: number, recordData: CreateHealthRecordDto): Promise<HealthRecord> {

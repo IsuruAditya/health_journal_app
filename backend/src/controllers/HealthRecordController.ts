@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { HealthRecordService } from '@/services/HealthRecordService';
-import { AnalysisService } from '@/services/AnalysisService';
-import { CreateHealthRecordDto, ApiResponse } from '@/types';
-import { asyncHandler } from '@/middleware/errorHandler';
+import { HealthRecordService } from '../services/HealthRecordService';
+import { AnalysisService } from '../services/AnalysisService';
+import { CreateHealthRecordDto, ApiResponse } from '../types';
+import { asyncHandler } from '../middleware/errorHandler';
 
 export class HealthRecordController {
   static createRecord = asyncHandler(async (req: Request, res: Response): Promise<void> => {

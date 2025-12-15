@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { HealthRecordController } from '@/controllers/HealthRecordController';
-import { authMiddleware } from '@/middleware/auth';
+import { HealthRecordController } from '../controllers/HealthRecordController';
+import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
 

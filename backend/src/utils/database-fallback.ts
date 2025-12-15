@@ -1,4 +1,4 @@
-import { mockPool } from '@/config/mock-database';
+import { mockPool } from '../config/mock-database';
 
 // Database fallback utility
 export const createDatabaseFallback = () => {

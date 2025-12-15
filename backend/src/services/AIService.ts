@@ -1,9 +1,9 @@
-import { HealthRecord, HealthAnalysis } from '@/types';
-import { rateLimiters } from '@/utils/RateLimiter';
-import { analysisCache } from '@/utils/Cache';
-import { circuitBreakers } from '@/utils/CircuitBreaker';
-import { analysisQueue, Priority } from '@/utils/Queue';
-import { metrics } from '@/utils/Metrics';
+import { HealthRecord, HealthAnalysis } from '../types';
+import { rateLimiters } from '../utils/RateLimiter';
+import { analysisCache } from '../utils/Cache';
+import { circuitBreakers } from '../utils/CircuitBreaker';
+import { analysisQueue, Priority } from '../utils/Queue';
+import { metrics } from '../utils/Metrics';
 
 export class AIService {
   private static readonly AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';

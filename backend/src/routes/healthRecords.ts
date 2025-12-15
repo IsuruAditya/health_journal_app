@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { HealthRecordController } from '@/controllers/HealthRecordController';
-import { authMiddleware } from '@/middleware/auth';
-import { validateRequest, healthRecordSchema } from '@/middleware/validation';
+import { HealthRecordController } from '../controllers/HealthRecordController';
+import { authMiddleware } from '../middleware/auth';
+import { validateRequest, healthRecordSchema } from '../middleware/validation';
 
 const router = Router();
 

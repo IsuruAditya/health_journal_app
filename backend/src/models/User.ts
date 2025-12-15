@@ -1,5 +1,5 @@
-import { pool } from '@/config/database';
-import { User } from '@/types';
+import { pool } from '../config/database';
+import { User } from '../types';
 
 export class UserModel {
   static async create(email: string, hashedPassword: string): Promise<User> {

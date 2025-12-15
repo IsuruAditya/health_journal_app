@@ -3,11 +3,11 @@
  */
 
 import { Router } from 'express';
-import { metrics } from '@/utils/Metrics';
-import { analysisCache } from '@/utils/Cache';
-import { analysisQueue } from '@/utils/Queue';
-import { circuitBreakers } from '@/utils/CircuitBreaker';
-import { rateLimiters } from '@/utils/RateLimiter';
+import { metrics } from '../utils/Metrics';
+import { analysisCache } from '../utils/Cache';
+import { analysisQueue } from '../utils/Queue';
+import { circuitBreakers } from '../utils/CircuitBreaker';
+import { rateLimiters } from '../utils/RateLimiter';
 
 const router = Router();
 

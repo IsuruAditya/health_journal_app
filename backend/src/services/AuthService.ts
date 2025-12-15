@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { UserModel } from '@/models/User';
-import { AuthTokenPayload, LoginDto, RegisterDto } from '@/types';
+import { UserModel } from '../models/User';
+import { AuthTokenPayload, LoginDto, RegisterDto } from '../types';
 
 export class AuthService {
   private static readonly JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';

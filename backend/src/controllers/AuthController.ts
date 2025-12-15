@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { AuthService } from '@/services/AuthService';
-import { LoginDto, RegisterDto, ApiResponse } from '@/types';
-import { asyncHandler } from '@/middleware/errorHandler';
+import { AuthService } from '../services/AuthService';
+import { LoginDto, RegisterDto, ApiResponse } from '../types';
+import { asyncHandler } from '../middleware/errorHandler';
 
 export class AuthController {
   static login = asyncHandler(async (req: Request, res: Response): Promise<void> => {

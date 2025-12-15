@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import routes from '@/routes';
-import { errorHandler, notFoundHandler } from '@/middleware/errorHandler';
-import { requestLogger } from '@/middleware/logger';
+import routes from './routes';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { requestLogger } from './middleware/logger';
 
 // Load environment variables
 dotenv.config();
@@ -14,11 +14,16 @@ const app = express();
 // Essential middleware - Allow all localhost origins for development
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
-    // Allow all localhost and 127.0.0.1 origins
-    if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('172.29.192.1')) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+    
+    if (origin.includes('localhost') || origin.includes('127.0.0.1') || 
+        origin.includes('vercel.app') || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
@@ -28,7 +33,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   exposedHeaders: ['X-Total-Count'],
-  maxAge: 86400 // 24 hours
+  maxAge: 86400
 }));
 
 // Handle preflight requests

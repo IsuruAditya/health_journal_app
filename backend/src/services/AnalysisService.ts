@@ -1,4 +1,4 @@
-import { HealthRecord, HealthAnalysis } from '@/types';
+import { HealthRecord, HealthAnalysis } from '../types';
 import { AIService } from './AIService';
 
 export class AnalysisService {

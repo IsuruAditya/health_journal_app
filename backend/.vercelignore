@@ -8,3 +8,5 @@ docs
 scripts
 tsconfig.json
 nodemon.json
+test-neon.js
+setup-db.js
