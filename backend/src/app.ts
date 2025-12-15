@@ -46,6 +46,20 @@ app.use(express.urlencoded({ extended: true }));
 // Request logging - Industry standard
 app.use(requestLogger);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Health Journal API is running',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      records: '/api/health-records'
+    }
+  });
+});
+
 // API routes
 app.use('/api', routes);
 
