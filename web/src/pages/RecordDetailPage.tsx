@@ -289,22 +289,7 @@ const RecordDetailPage: React.FC = () => {
       {/* AI Analysis Results */}
       {analysis && (
         <div className="space-y-6">
-          {/* Differential Diagnosis - Most Important */}
-          {analysis.differentialDiagnosis && analysis.differentialDiagnosis.length > 0 && (
-            <Card className="border-l-4 border-l-primary">
-              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Brain className="h-5 w-5 text-primary" />
-                Differential Diagnosis
-              </h2>
-              <div className="space-y-3">
-                {analysis.differentialDiagnosis.map((diagnosis, idx) => (
-                  <div key={idx} className="bg-primary/5 p-4 rounded-lg border border-primary/10">
-                    <MarkdownText text={diagnosis} className="text-sm text-foreground leading-relaxed" />
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
+
 
           {/* Clinical Assessment & Recommendations */}
           <Card>

@@ -1,8 +1,8 @@
 node_modules
-src
 .env.example
+.env
 *.md
-tsconfig.json
-tsconfig.node.json
-vite.config.ts
-tailwind.config.js
+README.md
+.git
+.gitignore
+public/index.html

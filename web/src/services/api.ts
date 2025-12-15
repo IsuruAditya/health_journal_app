@@ -1,7 +1,8 @@
 import axios from 'axios';
 import type { AuthResponse, HealthRecord, CreateHealthRecordData, ApiResponse, HealthAnalysis } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (import.meta.env.PROD ? 'https://health-journal-backend.vercel.app/api' : 'http://localhost:3001/api');
 
 // Create axios instance
 const api = axios.create({
