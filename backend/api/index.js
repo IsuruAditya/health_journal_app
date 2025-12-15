@@ -1,16 +1,29 @@
 const express = require('express');
 const cors = require('cors');
 
-// Simple health check app for testing
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Health Journal API is running',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      records: '/api/health-records'
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
-    status: 'ok', 
+    success: true,
     message: 'Health Journal API is running',
     timestamp: new Date().toISOString()
   });
@@ -19,7 +32,8 @@ app.get('/api/health', (req, res) => {
 // Catch all other routes
 app.all('*', (req, res) => {
   res.json({ 
-    message: 'Health Journal API', 
+    success: false,
+    message: 'Health Journal API - Endpoint under development', 
     path: req.path,
     method: req.method 
   });
