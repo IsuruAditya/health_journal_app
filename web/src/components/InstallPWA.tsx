@@ -1,50 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import Button from '@/components/ui/Button';
-import { Smartphone, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Download } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
+  prompt(): Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-const InstallPWA: React.FC = () => {
+const InstallPWA = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showBanner, setShowBanner] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     // Check if already installed
     const checkInstalled = () => {
-      const installed = window.matchMedia('(display-mode: standalone)').matches || 
-                       (window.navigator as any).standalone;
-      setIsInstalled(installed);
-      return installed;
+      return window.matchMedia('(display-mode: standalone)').matches || 
+             (window.navigator as any).standalone === true;
     };
 
-    if (checkInstalled()) return;
+    if (checkInstalled()) {
+      setIsInstalled(true);
+      return;
+    }
 
-    // Check if permanently dismissed
-    const dismissed = localStorage.getItem('pwa-install-dismissed');
-    if (dismissed === 'permanent') return;
-
-    const handler = (e: Event) => {
+    // Listen for install prompt
+    const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      
-      // Show banner after short delay for better UX
-      setTimeout(() => setShowBanner(true), 1000);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
-    
-    // Listen for app installed event
-    window.addEventListener('appinstalled', () => {
+    // Listen for app installed
+    const handleAppInstalled = () => {
       setIsInstalled(true);
-      setShowBanner(false);
-    });
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
@@ -55,62 +50,28 @@ const InstallPWA: React.FC = () => {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       
-      setDeferredPrompt(null);
-      setShowBanner(false);
-      
       if (outcome === 'accepted') {
         setIsInstalled(true);
       }
+      
+      setDeferredPrompt(null);
     } catch (error) {
       console.error('Install failed:', error);
     }
   };
 
-  const handleDismiss = () => {
-    setShowBanner(false);
-    localStorage.setItem('pwa-install-dismissed', 'session');
-  };
-
-  if (isInstalled || !showBanner) return null;
+  // Only show if can install and not installed
+  if (!deferredPrompt || isInstalled) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm border-b border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex-shrink-0 w-8 h-8 bg-primary-foreground/20 rounded-full flex items-center justify-center">
-              <Smartphone className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-primary-foreground">
-                Install Health Journal for better experience
-              </p>
-              <p className="text-xs text-primary-foreground/80 hidden sm:block">
-                Quick access, offline support, and native app experience
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button 
-              size="sm" 
-              onClick={handleInstall}
-              className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
-            >
-              Install
-            </Button>
-            <Button 
-              size="sm" 
-              variant="ghost" 
-              onClick={handleDismiss}
-              className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <button
+      onClick={handleInstall}
+      className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      aria-label="Install app"
+    >
+      <Download className="w-4 h-4" />
+      Install
+    </button>
   );
 };
 

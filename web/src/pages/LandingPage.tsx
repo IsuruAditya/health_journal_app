@@ -8,8 +8,8 @@ import InstallPWA from '@/components/InstallPWA';
 const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
-      <InstallPWA />
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <InstallPWA />
         <ThemeToggle />
       </div>
       <div className="container mx-auto px-4 py-16 pt-20">
