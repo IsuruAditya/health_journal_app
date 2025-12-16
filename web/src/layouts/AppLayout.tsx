@@ -7,6 +7,7 @@ import { Heart, User, LogOut, Plus, LayoutDashboard, FileText } from 'lucide-rea
 import ThemeToggle from '@/components/ThemeToggle';
 import MedicalDisclaimer from '@/components/MedicalDisclaimer';
 import MobileNav from '@/components/MobileNav';
+import InstallPWA from '@/components/InstallPWA';
 
 
 const AppLayout: React.FC = () => {
@@ -66,6 +67,7 @@ const AppLayout: React.FC = () => {
             </nav>
 
             <div className="flex items-center gap-2">
+              <InstallPWA />
               <ThemeToggle />
               
               <Button 
