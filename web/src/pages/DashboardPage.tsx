@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/useToast';
 import AnalysisModal from '@/components/AnalysisModal';
 import { HealthMetrics } from '@/components/HealthMetrics';
 import OverallHealthSummary from '@/components/OverallHealthSummary';
+import EmptyState from '@/components/EmptyState';
+import MedicalDisclaimer from '@/components/MedicalDisclaimer';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -125,20 +127,17 @@ const DashboardPage: React.FC = () => {
         )}
         
         {recentRecords.length === 0 ? (
-          <div className="text-center py-12 sm:py-16 bg-card rounded-xl border border-border shadow-sm">
-            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full mb-4">
-              <Activity className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
+          <div className="bg-card rounded-xl border border-border shadow-sm">
+            <EmptyState
+              icon={Activity}
+              title="No health records yet"
+              description="Start tracking your health journey by creating your first record. Document symptoms, medications, and vital signs to get AI-powered insights."
+              actionLabel="Create First Record"
+              onAction={() => navigate('/records/new')}
+            />
+            <div className="px-6 pb-6">
+              <MedicalDisclaimer variant="card" />
             </div>
-            <h3 className="text-base sm:text-lg font-semibold text-foreground">No health records yet</h3>
-            <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto px-4">Start tracking your health journey by creating your first record.</p>
-            <Button 
-              size="lg"
-              className="mt-6"
-              onClick={() => navigate('/records/new')}
-            >
-              <Plus className="h-5 w-5" />
-              <span>Create First Record</span>
-            </Button>
           </div>
         ) : (
           <div className="space-y-4">

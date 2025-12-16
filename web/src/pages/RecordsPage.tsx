@@ -35,7 +35,10 @@ const RecordsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        <div className="relative">
+          <div className="h-12 w-12 rounded-full border-4 border-muted"></div>
+          <div className="absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        </div>
       </div>
     );
   }

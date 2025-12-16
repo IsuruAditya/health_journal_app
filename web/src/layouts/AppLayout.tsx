@@ -1,14 +1,21 @@
 import React from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { authApi } from '@/services/api';
 import Button from '@/components/ui/Button';
 import { Heart, User, LogOut, Plus, LayoutDashboard, FileText } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
+import MedicalDisclaimer from '@/components/MedicalDisclaimer';
 
 const AppLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  };
 
   const handleLogout = () => {
     authApi.logout();
@@ -34,14 +41,22 @@ const AppLayout: React.FC = () => {
             <nav className="hidden md:flex items-center gap-1">
               <Link
                 to="/"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive('/') 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
               >
                 <LayoutDashboard className="h-4 w-4" />
                 <span>Dashboard</span>
               </Link>
               <Link
                 to="/records"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive('/records') 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
               >
                 <FileText className="h-4 w-4" />
                 <span>Records</span>
@@ -90,9 +105,17 @@ const AppLayout: React.FC = () => {
         </div>
       </header>
 
+      {/* Emergency Banner */}
+      <MedicalDisclaimer variant="banner" />
+      
       {/* Main Content */}
       <main className="pb-8">
         <Outlet />
+        
+        {/* Footer Disclaimer */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <MedicalDisclaimer variant="footer" />
+        </div>
       </main>
     </div>
   );
