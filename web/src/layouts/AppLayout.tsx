@@ -6,6 +6,8 @@ import Button from '@/components/ui/Button';
 import { Heart, User, LogOut, Plus, LayoutDashboard, FileText } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 import MedicalDisclaimer from '@/components/MedicalDisclaimer';
+import MobileNav from '@/components/MobileNav';
+import InstallPWA from '@/components/InstallPWA';
 
 const AppLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -109,7 +111,7 @@ const AppLayout: React.FC = () => {
       <MedicalDisclaimer variant="banner" />
       
       {/* Main Content */}
-      <main className="pb-8">
+      <main className="pb-8 md:pb-8 pb-20">
         <Outlet />
         
         {/* Footer Disclaimer */}
@@ -117,6 +119,12 @@ const AppLayout: React.FC = () => {
           <MedicalDisclaimer variant="footer" />
         </div>
       </main>
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileNav />
+      
+      {/* PWA Install Prompt */}
+      <InstallPWA />
     </div>
   );
 };

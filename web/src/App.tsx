@@ -12,6 +12,7 @@ import NewRecordPage from '@/pages/NewRecordPage';
 import RecordDetailPage from '@/pages/RecordDetailPage';
 import EditRecordPage from '@/pages/EditRecordPage';
 import DebugInfo from '@/components/DebugInfo';
+import InstallPWA from '@/components/InstallPWA';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -79,6 +80,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <DebugInfo />
+          <InstallPWA />
           </Router>
         </AuthProvider>
       </ThemeProvider>

@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#grad)" rx="80"/>
+  <g fill="white">
+    <!-- Medical cross -->
+    <rect x="216" y="128" width="80" height="256" rx="8"/>
+    <rect x="128" y="216" width="256" height="80" rx="8"/>
+    <!-- Heart symbol -->
+    <path d="M256 400c-32-24-80-64-80-120 0-32 24-56 56-56 16 0 24 8 24 8s8-8 24-8c32 0 56 24 56 56 0 56-48 96-80 120z" opacity="0.8"/>
+  </g>
+  <text x="256" y="460" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">Health Journal</text>
+</svg>
