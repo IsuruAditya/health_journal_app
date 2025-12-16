@@ -13,23 +13,58 @@ const InstallPWA: React.FC = () => {
 
   useEffect(() => {
     const handler = (e: Event) => {
-      console.log('Install prompt available');
+      console.log('✅ PWA Install prompt available');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShowInstallPrompt(true);
     };
+
+    // Check if already installed
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || 
+                       (window.navigator as any).standalone;
     
-    // Only show manual prompt if no native prompt after delay
-    setTimeout(() => {
-      if (!deferredPrompt && window.location.protocol === 'http:') {
-        setShowInstallPrompt(true);
-      }
-    }, 2000);
+    if (isInstalled) {
+      console.log('✅ PWA already installed');
+      return;
+    }
+
+    // Check if dismissed
+    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    if (dismissed) {
+      console.log('❌ PWA install dismissed by user');
+      return;
+    }
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+    // Fallback for testing - show after user engagement
+    const showFallback = () => {
+      if (!deferredPrompt && !isInstalled && !dismissed) {
+        console.log('⚠️ No native install prompt, showing fallback');
+        setShowInstallPrompt(true);
+      }
+    };
+
+    // Show after user interaction
+    const interactionEvents = ['click', 'scroll', 'keydown'];
+    const handleInteraction = () => {
+      setTimeout(showFallback, 2000);
+      interactionEvents.forEach(event => 
+        document.removeEventListener(event, handleInteraction)
+      );
+    };
+
+    interactionEvents.forEach(event => 
+      document.addEventListener(event, handleInteraction, { once: true })
+    );
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      interactionEvents.forEach(event => 
+        document.removeEventListener(event, handleInteraction)
+      );
+    };
+  }, [deferredPrompt]);
 
   const handleInstall = async () => {
     if (!deferredPrompt) {

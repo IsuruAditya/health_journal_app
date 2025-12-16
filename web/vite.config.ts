@@ -13,15 +13,16 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'icons/*.png'],
       manifest: {
-        name: 'Health Journal',
-        short_name: 'Salubro',
-        description: 'Track your health journey with medical-grade assessment tools',
+        name: 'Health Journal - Salubro',
+        short_name: 'Health Journal',
+        description: 'Track your health journey with medical-grade assessment tools and AI-powered insights',
         theme_color: '#3b82f6',
         background_color: '#ffffff',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'portrait-primary',
         scope: '/',
-        start_url: '/',
+        start_url: '/?utm_source=pwa',
+        categories: ['health', 'medical', 'lifestyle'],
         icons: [
           {
             src: '/icons/manifest-icon-192.maskable.png',
