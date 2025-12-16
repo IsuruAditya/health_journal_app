@@ -14,7 +14,7 @@ import RecordDetailPage from '@/pages/RecordDetailPage';
 import EditRecordPage from '@/pages/EditRecordPage';
 import ProfilePage from '@/pages/ProfilePage';
 import DebugInfo from '@/components/DebugInfo';
-import InstallPWA from '@/components/InstallPWA';
+
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -22,8 +22,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -37,8 +37,8 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -84,7 +84,6 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <DebugInfo />
-          <InstallPWA />
           </Router>
         </AuthProvider>
       </ThemeProvider>

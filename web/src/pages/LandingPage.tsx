@@ -3,14 +3,16 @@ import { Link } from 'react-router-dom';
 import { Heart, Shield, Smartphone } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import ThemeToggle from '@/components/ThemeToggle';
+import InstallPWA from '@/components/InstallPWA';
 
 const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <InstallPWA />
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 pt-20">
         <div className="text-center mb-16">
           <Heart className="h-16 w-16 text-primary mx-auto mb-6" />
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">

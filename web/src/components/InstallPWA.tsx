@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
-import { Download, X } from 'lucide-react';
+import { Smartphone, X } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -9,114 +9,104 @@ interface BeforeInstallPromptEvent extends Event {
 
 const InstallPWA: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    // Check if already installed
+    const checkInstalled = () => {
+      const installed = window.matchMedia('(display-mode: standalone)').matches || 
+                       (window.navigator as any).standalone;
+      setIsInstalled(installed);
+      return installed;
+    };
+
+    if (checkInstalled()) return;
+
+    // Check if permanently dismissed
+    const dismissed = localStorage.getItem('pwa-install-dismissed');
+    if (dismissed === 'permanent') return;
+
     const handler = (e: Event) => {
-      console.log('✅ PWA Install prompt available');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowInstallPrompt(true);
+      
+      // Show banner after short delay for better UX
+      setTimeout(() => setShowBanner(true), 1000);
     };
-
-    // Check if already installed
-    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || 
-                       (window.navigator as any).standalone;
-    
-    if (isInstalled) {
-      console.log('✅ PWA already installed');
-      return;
-    }
-
-    // Check if dismissed
-    const dismissed = localStorage.getItem('pwa-install-dismissed');
-    if (dismissed) {
-      console.log('❌ PWA install dismissed by user');
-      return;
-    }
 
     window.addEventListener('beforeinstallprompt', handler);
-
-    // Fallback for testing - show after user engagement
-    const showFallback = () => {
-      if (!deferredPrompt && !isInstalled && !dismissed) {
-        console.log('⚠️ No native install prompt, showing fallback');
-        setShowInstallPrompt(true);
-      }
-    };
-
-    // Show after user interaction
-    const interactionEvents = ['click', 'scroll', 'keydown'];
-    const handleInteraction = () => {
-      setTimeout(showFallback, 2000);
-      interactionEvents.forEach(event => 
-        document.removeEventListener(event, handleInteraction)
-      );
-    };
-
-    interactionEvents.forEach(event => 
-      document.addEventListener(event, handleInteraction, { once: true })
-    );
+    
+    // Listen for app installed event
+    window.addEventListener('appinstalled', () => {
+      setIsInstalled(true);
+      setShowBanner(false);
+    });
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
-      interactionEvents.forEach(event => 
-        document.removeEventListener(event, handleInteraction)
-      );
     };
-  }, [deferredPrompt]);
+  }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) {
-      // Fallback for manual install instructions
-      alert('To install: Chrome menu → "Install Health Journal" or Add to Home Screen on mobile');
-      return;
-    }
+    if (!deferredPrompt) return;
 
     try {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       
-      if (outcome === 'accepted') {
-        console.log('PWA installed');
-      }
-      
       setDeferredPrompt(null);
-      setShowInstallPrompt(false);
+      setShowBanner(false);
+      
+      if (outcome === 'accepted') {
+        setIsInstalled(true);
+      }
     } catch (error) {
       console.error('Install failed:', error);
     }
   };
 
   const handleDismiss = () => {
-    setShowInstallPrompt(false);
-    localStorage.setItem('pwa-install-dismissed', 'true');
+    setShowBanner(false);
+    localStorage.setItem('pwa-install-dismissed', 'session');
   };
 
-  if (!showInstallPrompt) return null;
+  if (isInstalled || !showBanner) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-40 animate-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-card border border-border rounded-lg shadow-lg p-4">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Download className="h-5 w-5 text-primary" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-foreground mb-1">
-              Install Health Journal
-            </h3>
-            <p className="text-xs text-muted-foreground mb-3">
-              Install our app for quick access and offline support
-            </p>
-            <div className="flex gap-2">
-              <Button size="sm" onClick={handleInstall} className="flex-1">
-                Install
-              </Button>
-              <Button size="sm" variant="ghost" onClick={handleDismiss}>
-                <X className="h-4 w-4" />
-              </Button>
+    <div className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm border-b border-primary/20">
+      <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex-shrink-0 w-8 h-8 bg-primary-foreground/20 rounded-full flex items-center justify-center">
+              <Smartphone className="h-4 w-4 text-primary-foreground" />
             </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-primary-foreground">
+                Install Health Journal for better experience
+              </p>
+              <p className="text-xs text-primary-foreground/80 hidden sm:block">
+                Quick access, offline support, and native app experience
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button 
+              size="sm" 
+              onClick={handleInstall}
+              className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+            >
+              Install
+            </Button>
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              onClick={handleDismiss}
+              className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
