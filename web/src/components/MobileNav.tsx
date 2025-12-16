@@ -6,15 +6,15 @@ const MobileNav: React.FC = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
+    if (path === '/dashboard') return location.pathname === '/dashboard';
     return location.pathname.startsWith(path);
   };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-    { icon: FileText, label: 'Records', path: '/records' },
-    { icon: Plus, label: 'New', path: '/records/new', primary: true },
-    { icon: User, label: 'Profile', path: '/profile' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: FileText, label: 'Records', path: '/dashboard/records' },
+    { icon: Plus, label: 'New', path: '/dashboard/records/new', primary: true },
+    { icon: User, label: 'Profile', path: '/dashboard/profile' },
   ];
 
   return (
