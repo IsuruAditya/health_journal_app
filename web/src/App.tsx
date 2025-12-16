@@ -12,6 +12,7 @@ import RecordsPage from '@/pages/RecordsPage';
 import NewRecordPage from '@/pages/NewRecordPage';
 import RecordDetailPage from '@/pages/RecordDetailPage';
 import EditRecordPage from '@/pages/EditRecordPage';
+import ProfilePage from '@/pages/ProfilePage';
 import DebugInfo from '@/components/DebugInfo';
 import InstallPWA from '@/components/InstallPWA';
 
@@ -76,6 +77,7 @@ function App() {
             <Route path="records/new" element={<NewRecordPage />} />
             <Route path="records/:id" element={<RecordDetailPage />} />
             <Route path="records/:id/edit" element={<EditRecordPage />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
           
           {/* Catch all route */}

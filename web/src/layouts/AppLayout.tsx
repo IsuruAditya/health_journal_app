@@ -32,7 +32,7 @@ const AppLayout: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center">
-              <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
+              <Link to="/dashboard" className="flex items-center gap-2 sm:gap-3 group">
                 <div className="p-1.5 sm:p-2 bg-primary rounded-lg group-hover:scale-105 transition-all duration-200 shadow-sm">
                   <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
                 </div>
@@ -42,9 +42,9 @@ const AppLayout: React.FC = () => {
             
             <nav className="hidden md:flex items-center gap-1">
               <Link
-                to="/"
+                to="/dashboard"
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive('/') 
+                  location.pathname === '/dashboard'
                     ? 'bg-primary/10 text-primary' 
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
@@ -53,9 +53,9 @@ const AppLayout: React.FC = () => {
                 <span>Dashboard</span>
               </Link>
               <Link
-                to="/records"
+                to="/dashboard/records"
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive('/records') 
+                  isActive('/dashboard/records') 
                     ? 'bg-primary/10 text-primary' 
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
@@ -71,7 +71,7 @@ const AppLayout: React.FC = () => {
               <Button 
                 size="sm" 
                 className="hidden sm:flex"
-                onClick={() => navigate('/records/new')}
+                onClick={() => navigate('/dashboard/records/new')}
               >
                 <Plus className="h-4 w-4" />
                 <span>New Record</span>
@@ -80,7 +80,7 @@ const AppLayout: React.FC = () => {
               <Button 
                 size="sm" 
                 className="sm:hidden"
-                onClick={() => navigate('/records/new')}
+                onClick={() => navigate('/dashboard/records/new')}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -111,7 +111,7 @@ const AppLayout: React.FC = () => {
       <MedicalDisclaimer variant="banner" />
       
       {/* Main Content */}
-      <main className="pb-8 md:pb-8 pb-20">
+      <main className="pb-20 md:pb-8">
         <Outlet />
         
         {/* Footer Disclaimer */}
