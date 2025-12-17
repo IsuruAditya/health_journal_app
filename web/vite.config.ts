@@ -14,6 +14,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'icons/*.png'],
+      manifestFilename: 'manifest.json',
       manifest: {
         name: 'Health Journal',
         short_name: 'Health Journal',
