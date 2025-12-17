@@ -3,8 +3,9 @@ import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { healthRecordsApi } from '@/services/api';
 import { useHealthStore } from '@/store/useHealthStore';
 import HealthRecordCard from '@/components/HealthRecordCard';
+import Button from '@/components/ui/Button';
 import { Link, useNavigate } from 'react-router-dom';
-import { Activity } from 'lucide-react';
+import { Activity, Plus } from 'lucide-react';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useToast } from '@/hooks/useToast';
 import AnalysisModal from '@/components/AnalysisModal';
@@ -88,9 +89,18 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Track your health journey</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Track your health journey</p>
+        </div>
+        <Button
+          onClick={() => navigate('/records/new')}
+          className="hidden md:flex"
+        >
+          <Plus className="h-4 w-4" />
+          <span>New Record</span>
+        </Button>
       </div>
 
       {/* Overall Health Summary */}

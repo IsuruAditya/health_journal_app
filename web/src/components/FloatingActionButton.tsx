@@ -16,7 +16,8 @@ const FloatingActionButton: React.FC = () => {
     <button
       onClick={() => navigate('/records/new')}
       className={cn(
-        "fixed bottom-20 right-4 md:bottom-6 md:right-6",
+        "md:hidden",
+        "fixed bottom-20 right-4",
         "h-14 w-14 rounded-full",
         "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]",
         "shadow-lg hover:shadow-2xl",
