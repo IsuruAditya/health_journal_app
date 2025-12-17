@@ -95,7 +95,7 @@ const DashboardPage: React.FC = () => {
           <p className="text-sm text-muted-foreground mt-1">Track your health journey</p>
         </div>
         <Button
-          onClick={() => navigate('/records/new')}
+          onClick={() => navigate('/dashboard/records/new')}
           className="hidden md:flex"
         >
           <Plus className="h-4 w-4" />

@@ -14,19 +14,19 @@ const FloatingActionButton: React.FC = () => {
 
   return (
     <button
-      onClick={() => navigate('/records/new')}
+      onClick={() => navigate('/dashboard/records/new')}
       className={cn(
         "md:hidden",
-        "fixed bottom-20 right-4",
+        "fixed bottom-20 right-5",
         "h-14 w-14 rounded-full",
-        "bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--primary))]/95",
-        "text-[hsl(var(--primary-foreground))]",
-        "shadow-lg shadow-primary/30 hover:shadow-2xl hover:shadow-primary/50",
+        "bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600",
+        "text-white",
+        "shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/50",
         "flex items-center justify-center",
         "transition-all duration-300 ease-out",
         "hover:scale-110 active:scale-95",
         "z-40",
-        "focus:outline-none focus:ring-4 focus:ring-[hsl(var(--primary))]/30"
+        "focus:outline-none focus:ring-4 focus:ring-blue-500/30"
       )}
       aria-label="Add new health record"
     >

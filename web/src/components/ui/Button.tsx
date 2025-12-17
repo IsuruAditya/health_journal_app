@@ -19,16 +19,16 @@ const Button: React.FC<ButtonProps> = ({
   const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97] relative overflow-hidden whitespace-nowrap';
   
   const variants = {
-    primary: 'bg-gradient-to-b from-[hsl(var(--primary))] to-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] hover:from-[hsl(var(--primary))]/90 hover:to-[hsl(var(--primary))]/80 shadow-sm hover:shadow-md hover:scale-[1.02] focus-visible:ring-[hsl(var(--primary))] font-medium border border-[hsl(var(--primary))]/20',
-    secondary: 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--accent))] border border-[hsl(var(--border))] shadow-sm hover:shadow focus-visible:ring-[hsl(var(--primary))]',
-    outline: 'border border-[hsl(var(--border))] bg-transparent hover:bg-[hsl(var(--accent))] hover:border-[hsl(var(--border))] text-[hsl(var(--foreground))] focus-visible:ring-[hsl(var(--primary))]',
-    ghost: 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--primary))]',
+    primary: 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-sm shadow-blue-500/20 hover:shadow-md hover:shadow-blue-500/30 hover:scale-[1.02] focus-visible:ring-blue-500 font-medium',
+    secondary: 'bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 text-slate-900 dark:text-slate-100 hover:from-slate-100 hover:to-slate-200 dark:hover:from-slate-700 dark:hover:to-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow focus-visible:ring-blue-500',
+    outline: 'border-2 border-slate-200 dark:border-slate-700 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-blue-300 dark:hover:border-blue-600 text-slate-700 dark:text-slate-300 focus-visible:ring-blue-500',
+    ghost: 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:ring-blue-500',
   };
   
   const sizes = {
-    sm: 'h-9 px-3 text-sm gap-2 min-w-[80px]',
-    md: 'h-10 px-4 text-sm gap-2 min-w-[100px]',
-    lg: 'h-11 px-6 text-base gap-2.5 min-w-[120px]',
+    sm: 'h-8 px-3 text-xs gap-1.5 min-w-[70px]',
+    md: 'h-9 px-4 text-sm gap-2 min-w-[90px]',
+    lg: 'h-10 px-5 text-sm gap-2 min-w-[110px]',
   };
 
   return (
