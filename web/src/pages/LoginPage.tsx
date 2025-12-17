@@ -33,14 +33,15 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,hsl(var(--primary)/0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_120%,hsl(var(--primary)/0.1),transparent_50%)]" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Modern gradient orbs */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       
       <div className="max-w-md w-full space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center space-y-4">
-          <div className="mx-auto h-14 w-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 ring-1 ring-primary/10">
+          <div className="mx-auto h-14 w-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 ring-1 ring-primary/20 transition-transform hover:scale-110 duration-300">
             <Heart className="h-7 w-7 text-primary-foreground" />
           </div>
           <div className="space-y-2">

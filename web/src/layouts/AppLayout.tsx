@@ -28,9 +28,9 @@ const AppLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-200">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 transition-colors duration-200">
       {/* Header */}
-      <header className="bg-card/95 backdrop-blur-lg shadow-sm border-b border-border sticky top-0 z-50 transition-colors duration-200">
+      <header className="bg-card/80 backdrop-blur-xl shadow-sm border-b border-border/50 sticky top-0 z-50 transition-all duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center">
