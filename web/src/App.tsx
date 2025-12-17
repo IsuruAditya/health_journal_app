@@ -20,6 +20,8 @@ import DebugInfo from '@/components/DebugInfo';
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
+  console.log('ProtectedRoute - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -28,7 +30,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     );
   }
   
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    console.log('User not authenticated, redirecting to login');
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
 };
 
 // Public Route Component (redirect if authenticated)
@@ -44,6 +51,21 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
   
   return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" replace />;
+};
+
+// Catch All Route Component
+const CatchAllRoute: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  
+  return <Navigate to={isAuthenticated ? "/dashboard" : "/"} replace />;
 };
 
 function App() {
@@ -81,7 +103,7 @@ function App() {
           </Route>
           
           {/* Catch all route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<CatchAllRoute />} />
           </Routes>
           <DebugInfo />
           </Router>

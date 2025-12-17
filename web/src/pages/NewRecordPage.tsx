@@ -65,7 +65,7 @@ const NewRecordPage: React.FC = () => {
         console.log('Health record created successfully');
       }
       
-      navigate('/records');
+      navigate('/dashboard/records');
     } catch (error: any) {
       console.error('Failed to create record:', error);
       setError(error.response?.data?.error || 'Failed to create health record. Please try again.');
@@ -75,18 +75,18 @@ const NewRecordPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20">
-      <div className="flex items-center space-x-4">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pb-20">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="flex items-center space-x-2"
+          className="flex items-center space-x-2 self-start"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back</span>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">New Health Record</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">New Health Record</h1>
           <p className="text-muted-foreground mt-1">Record your health information</p>
         </div>
       </div>
@@ -273,19 +273,20 @@ const NewRecordPage: React.FC = () => {
         </Card>
 
         {/* Submit Button */}
-        <div className="sticky bottom-0 bg-card border-t border-border p-6 -mx-6 -mb-6 rounded-b-xl">
-          <div className="flex justify-end space-x-4">
+        <div className="sticky bottom-0 bg-card border-t border-border p-4 sm:p-6 -mx-4 sm:-mx-6 -mb-6 rounded-b-xl">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
             <Button
               type="button"
               variant="secondary"
               onClick={() => navigate(-1)}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               loading={loading}
-              className="min-w-[120px]"
+              className="w-full sm:w-auto min-w-[120px]"
             >
               <Save className="h-4 w-4" />
               <span>Save Record</span>

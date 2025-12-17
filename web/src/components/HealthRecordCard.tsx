@@ -13,8 +13,21 @@ interface HealthRecordCardProps {
 
 const HealthRecordCard: React.FC<HealthRecordCardProps> = ({ record, onAnalyze }) => {
   const navigate = useNavigate();
+  
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent navigation if clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('a') || target.closest('[role="button"]')) {
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Navigating to record:', record.id);
+    navigate(`/dashboard/records/${record.id}`);
+  };
+  
   return (
-    <Card hover className="cursor-pointer" onClick={() => navigate(`/records/${record.id}`)}>
+    <Card hover className="cursor-pointer" onClick={handleCardClick}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -129,6 +142,7 @@ const HealthRecordCard: React.FC<HealthRecordCardProps> = ({ record, onAnalyze }
               e.stopPropagation();
               onAnalyze(record.id);
             }}
+            className="w-full sm:w-auto"
           >
             <Brain className="h-4 w-4" />
             <span>{record.ai_analysis ? 'Re-analyze' : 'Analyze'}</span>

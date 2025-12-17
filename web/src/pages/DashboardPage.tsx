@@ -3,9 +3,8 @@ import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { healthRecordsApi } from '@/services/api';
 import { useHealthStore } from '@/store/useHealthStore';
 import HealthRecordCard from '@/components/HealthRecordCard';
-import Button from '@/components/ui/Button';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useToast } from '@/hooks/useToast';
 import AnalysisModal from '@/components/AnalysisModal';
@@ -89,18 +88,9 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Track your health journey</p>
-        </div>
-        <Button 
-          size="lg"
-          onClick={() => navigate('/records/new')}
-        >
-          <Plus className="h-5 w-5" />
-          <span>New Record</span>
-        </Button>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-1">Track your health journey</p>
       </div>
 
       {/* Overall Health Summary */}
@@ -115,7 +105,7 @@ const DashboardPage: React.FC = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground">Recent Records</h2>
-          <Link to="/records" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+          <Link to="/dashboard/records" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
             View all →
           </Link>
         </div>
@@ -133,7 +123,7 @@ const DashboardPage: React.FC = () => {
               title="No health records yet"
               description="Start tracking your health journey by creating your first record. Document symptoms, medications, and vital signs to get AI-powered insights."
               actionLabel="Create First Record"
-              onAction={() => navigate('/records/new')}
+              onAction={() => navigate('/dashboard/records/new')}
             />
             <div className="px-6 pb-6">
               <MedicalDisclaimer variant="card" />

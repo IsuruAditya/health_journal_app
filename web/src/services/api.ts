@@ -27,8 +27,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      console.log('401 error detected, clearing auth token');
       localStorage.removeItem('authToken');
-      window.location.href = '/login';
+      localStorage.removeItem('userData');
+      // Let the auth context handle the redirect instead of forcing it here
+      // This prevents bypassing React Router
     }
     return Promise.reject(error);
   }

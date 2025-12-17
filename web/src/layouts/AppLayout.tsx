@@ -3,11 +3,12 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { authApi } from '@/services/api';
 import Button from '@/components/ui/Button';
-import { Heart, User, LogOut, Plus, LayoutDashboard, FileText } from 'lucide-react';
+import { Heart, User, LogOut, LayoutDashboard, FileText } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 import MedicalDisclaimer from '@/components/MedicalDisclaimer';
 import MobileNav from '@/components/MobileNav';
 import InstallPWA from '@/components/InstallPWA';
+import FloatingActionButton from '@/components/FloatingActionButton';
 
 
 const AppLayout: React.FC = () => {
@@ -70,23 +71,6 @@ const AppLayout: React.FC = () => {
               <InstallPWA />
               <ThemeToggle />
               
-              <Button 
-                size="sm" 
-                className="hidden sm:flex"
-                onClick={() => navigate('/dashboard/records/new')}
-              >
-                <Plus className="h-4 w-4" />
-                <span>New Record</span>
-              </Button>
-              
-              <Button 
-                size="sm" 
-                className="sm:hidden"
-                onClick={() => navigate('/dashboard/records/new')}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-              
               <div className="hidden lg:flex items-center gap-2 px-2.5 py-1.5 bg-muted rounded-lg">
                 <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                   <User className="h-3.5 w-3.5 text-primary-foreground" />
@@ -124,6 +108,9 @@ const AppLayout: React.FC = () => {
       
       {/* Mobile Bottom Navigation */}
       <MobileNav />
+      
+      {/* Floating Action Button */}
+      <FloatingActionButton />
       
 
     </div>

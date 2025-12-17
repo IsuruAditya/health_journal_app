@@ -28,7 +28,6 @@ const RecordDetailPage: React.FC = () => {
         const data = await healthRecordsApi.getRecord(parseInt(id));
         setRecord(data);
         
-        // Load saved AI analysis if exists
         if (data.ai_analysis) {
           setAnalysis(data.ai_analysis);
         }
@@ -51,7 +50,6 @@ const RecordDetailPage: React.FC = () => {
     try {
       const result = await healthRecordsApi.getAnalysis(record.id);
       setAnalysis(result);
-      // Update record with new analysis
       setRecord(prev => prev ? { ...prev, ai_analysis: result } : null);
     } catch (err) {
       console.error('Analysis failed:', err);
@@ -80,133 +78,140 @@ const RecordDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (error || !record) {
     return (
-      <div className="text-center py-12">
-        <div className="text-red-600 mb-4">{error || 'Record not found'}</div>
+      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <div className="text-destructive mb-4">{error || 'Record not found'}</div>
         <Button onClick={() => navigate('/records')}>Back to Records</Button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/records')}
-            className="flex items-center space-x-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Records</span>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Health Record Details</h1>
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
-              <div className="flex items-center space-x-1">
-                <Calendar className="h-4 w-4" />
-                <span>{formatDate(record.record_date)}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Clock className="h-4 w-4" />
-                <span>{formatTime(record.record_time)}</span>
-              </div>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-in fade-in duration-300">
+      {/* Header */}
+      <div className="space-y-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/records')}
+          className="flex items-center gap-2 -ml-2 transition-transform hover:translate-x-1"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back</span>
+        </Button>
+        
+        <div className="space-y-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Record Details</h1>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5 bg-muted px-2.5 py-1 rounded-md">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>{formatDate(record.record_date)}</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-muted px-2.5 py-1 rounded-md">
+              <Clock className="h-3.5 w-3.5" />
+              <span>{formatTime(record.record_time)}</span>
             </div>
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
+            size="sm"
             onClick={() => navigate(`/records/${record.id}/edit`)}
+            className="flex-1 sm:flex-none transition-all hover:scale-105"
           >
             <Edit className="h-4 w-4" />
             <span>Edit</span>
           </Button>
           <Button
             variant="outline"
+            size="sm"
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-300"
+            className="flex-1 sm:flex-none text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30 transition-all hover:scale-105"
           >
             <Trash2 className="h-4 w-4" />
             <span>Delete</span>
           </Button>
           <Button
+            size="sm"
             onClick={handleAnalyze}
             loading={analysisLoading}
+            className="w-full sm:w-auto transition-all hover:scale-105"
           >
             <Brain className="h-4 w-4" />
-            <span>{analysis ? 'Regenerate Analysis' : 'AI Analysis'}</span>
+            <span>{analysis ? 'Regenerate' : 'Analyze'}</span>
           </Button>
         </div>
       </div>
 
       {/* Severity Badge */}
       {record.severity && (
-        <div className="flex justify-center">
-          <span className={`px-4 py-2 rounded-full text-sm font-medium ${getSeverityColor(record.severity)}`}>
+        <div className="flex justify-center animate-in slide-in-from-top duration-500">
+          <span className={`px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 ${getSeverityColor(record.severity)}`}>
             {getSeverityLabel(record.severity)} - {record.severity}/10
           </span>
         </div>
       )}
 
       {/* SOCRATES Framework */}
-      <Card>
-        <h2 className="text-lg font-semibold text-foreground mb-4">Symptom Assessment (SOCRATES)</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Card className="animate-in slide-in-from-bottom duration-500">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Symptom Assessment</h2>
+        <div className="grid grid-cols-1 gap-3">
           {record.site && (
-            <div className="flex items-start space-x-2">
-              <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
-              <div>
+            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <MapPin className="h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
                 <span className="text-sm font-medium text-foreground">Site: </span>
                 <span className="text-sm text-muted-foreground">{record.site}</span>
               </div>
             </div>
           )}
           {record.onset && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Onset: </span>
               <span className="text-sm text-muted-foreground">{record.onset}</span>
             </div>
           )}
           {record.character && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Character: </span>
               <span className="text-sm text-muted-foreground">{record.character}</span>
             </div>
           )}
           {record.radiation && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Radiation: </span>
               <span className="text-sm text-muted-foreground">{record.radiation}</span>
             </div>
           )}
           {record.associations && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Associations: </span>
               <span className="text-sm text-muted-foreground">{record.associations}</span>
             </div>
           )}
           {record.time_course && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Time Course: </span>
               <span className="text-sm text-muted-foreground">{record.time_course}</span>
             </div>
           )}
           {record.exacerbating_factors && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Exacerbating: </span>
               <span className="text-sm text-muted-foreground">{record.exacerbating_factors}</span>
             </div>
           )}
           {record.palliating_factors && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Palliating: </span>
               <span className="text-sm text-muted-foreground">{record.palliating_factors}</span>
             </div>
@@ -215,29 +220,29 @@ const RecordDetailPage: React.FC = () => {
       </Card>
 
       {/* Additional Information */}
-      <Card>
+      <Card className="animate-in slide-in-from-bottom duration-500 delay-100">
         <h2 className="text-lg font-semibold text-foreground mb-4">Additional Information</h2>
         <div className="space-y-3">
           {record.symptoms && (
-            <div className="flex items-start space-x-2">
-              <Activity className="h-4 w-4 text-muted-foreground mt-1" />
-              <div>
+            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <Activity className="h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
                 <span className="text-sm font-medium text-foreground">Symptoms: </span>
                 <span className="text-sm text-muted-foreground">{record.symptoms}</span>
               </div>
             </div>
           )}
           {record.medications && (
-            <div className="flex items-start space-x-2">
-              <Pill className="h-4 w-4 text-muted-foreground mt-1" />
-              <div>
+            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <Pill className="h-4 w-4 text-muted-foreground mt-1 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
                 <span className="text-sm font-medium text-foreground">Medications: </span>
                 <span className="text-sm text-muted-foreground">{record.medications}</span>
               </div>
             </div>
           )}
           {record.diet_notes && (
-            <div>
+            <div className="p-2 rounded-lg hover:bg-muted/50 transition-colors">
               <span className="text-sm font-medium text-foreground">Diet Notes: </span>
               <span className="text-sm text-muted-foreground">{record.diet_notes}</span>
             </div>
@@ -247,31 +252,31 @@ const RecordDetailPage: React.FC = () => {
 
       {/* Vital Signs */}
       {record.vital_signs && Object.values(record.vital_signs).some(v => v) && (
-        <Card>
+        <Card className="animate-in slide-in-from-bottom duration-500 delay-150">
           <h2 className="text-lg font-semibold text-foreground mb-4">Vital Signs</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             {record.vital_signs.blood_pressure && (
-              <div className="text-center p-3 bg-muted rounded-md">
-                <div className="text-sm font-medium text-foreground">Blood Pressure</div>
-                <div className="text-lg font-semibold text-foreground">{record.vital_signs.blood_pressure}</div>
+              <div className="text-center p-3 bg-muted rounded-lg hover:bg-muted/80 transition-all hover:scale-105">
+                <div className="text-xs font-medium text-muted-foreground">Blood Pressure</div>
+                <div className="text-lg font-semibold text-foreground mt-1">{record.vital_signs.blood_pressure}</div>
               </div>
             )}
             {record.vital_signs.temperature && (
-              <div className="text-center p-3 bg-muted rounded-md">
-                <div className="text-sm font-medium text-foreground">Temperature</div>
-                <div className="text-lg font-semibold text-foreground">{record.vital_signs.temperature}°F</div>
+              <div className="text-center p-3 bg-muted rounded-lg hover:bg-muted/80 transition-all hover:scale-105">
+                <div className="text-xs font-medium text-muted-foreground">Temperature</div>
+                <div className="text-lg font-semibold text-foreground mt-1">{record.vital_signs.temperature}°F</div>
               </div>
             )}
             {record.vital_signs.pulse && (
-              <div className="text-center p-3 bg-muted rounded-md">
-                <div className="text-sm font-medium text-foreground">Pulse</div>
-                <div className="text-lg font-semibold text-foreground">{record.vital_signs.pulse} bpm</div>
+              <div className="text-center p-3 bg-muted rounded-lg hover:bg-muted/80 transition-all hover:scale-105">
+                <div className="text-xs font-medium text-muted-foreground">Pulse</div>
+                <div className="text-lg font-semibold text-foreground mt-1">{record.vital_signs.pulse} bpm</div>
               </div>
             )}
             {record.vital_signs.weight && (
-              <div className="text-center p-3 bg-muted rounded-md">
-                <div className="text-sm font-medium text-foreground">Weight</div>
-                <div className="text-lg font-semibold text-foreground">{record.vital_signs.weight} lbs</div>
+              <div className="text-center p-3 bg-muted rounded-lg hover:bg-muted/80 transition-all hover:scale-105">
+                <div className="text-xs font-medium text-muted-foreground">Weight</div>
+                <div className="text-lg font-semibold text-foreground mt-1">{record.vital_signs.weight} lbs</div>
               </div>
             )}
           </div>
@@ -280,18 +285,15 @@ const RecordDetailPage: React.FC = () => {
 
       {/* Personal Notes */}
       {record.personal_notes && (
-        <Card>
+        <Card className="animate-in slide-in-from-bottom duration-500 delay-200">
           <h2 className="text-lg font-semibold text-foreground mb-4">Personal Notes</h2>
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{record.personal_notes}</p>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{record.personal_notes}</p>
         </Card>
       )}
 
       {/* AI Analysis Results */}
       {analysis && (
-        <div className="space-y-6">
-
-
-          {/* Clinical Assessment & Recommendations */}
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom duration-700">
           <Card>
             <h2 className="text-lg font-semibold text-foreground mb-4">Clinical Assessment</h2>
             <div className="space-y-4">
@@ -300,7 +302,7 @@ const RecordDetailPage: React.FC = () => {
                   <h3 className="font-medium text-foreground mb-2">Assessment</h3>
                   <ul className="space-y-2">
                     {analysis.symptomPattern.map((pattern, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
+                      <li key={idx} className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                         <span className="text-primary mt-1">•</span>
                         <MarkdownText text={pattern} className="text-sm text-foreground flex-1" />
                       </li>
@@ -314,7 +316,7 @@ const RecordDetailPage: React.FC = () => {
                   <h3 className="font-medium text-foreground mb-2">Clinical Reasoning</h3>
                   <ul className="space-y-2">
                     {analysis.riskFactors.map((risk, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
+                      <li key={idx} className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                         <span className="text-primary mt-1">•</span>
                         <MarkdownText text={risk} className="text-sm text-foreground flex-1" />
                       </li>
@@ -327,7 +329,7 @@ const RecordDetailPage: React.FC = () => {
                 <h3 className="font-medium text-foreground mb-2">Recommended Actions</h3>
                 <ul className="space-y-2">
                   {analysis.recommendations.map((rec, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
+                    <li key={idx} className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                       <span className="text-primary mt-1">•</span>
                       <MarkdownText text={rec} className="text-sm text-foreground flex-1" />
                     </li>
@@ -336,7 +338,7 @@ const RecordDetailPage: React.FC = () => {
               </div>
               
               {analysis.redFlags.length > 0 && (
-                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 animate-pulse">
                   <h3 className="font-medium text-destructive mb-2 flex items-center gap-2">
                     <Activity className="h-4 w-4" />
                     Safety Information
@@ -358,8 +360,8 @@ const RecordDetailPage: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-card rounded-xl max-w-md w-full p-6 shadow-xl border border-border">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-card rounded-xl max-w-md w-full p-6 shadow-xl border border-border animate-in zoom-in-95 duration-300">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-destructive/10 rounded-lg">
                 <Trash2 className="h-5 w-5 text-destructive" />
@@ -369,20 +371,21 @@ const RecordDetailPage: React.FC = () => {
             <p className="text-muted-foreground mb-6">
               Are you sure you want to delete this health record? This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-3">
+            <div className="flex gap-3">
               <Button
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={deleteLoading}
+                className="flex-1"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDelete}
                 loading={deleteLoading}
-                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+                className="flex-1 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               >
-                Delete Record
+                Delete
               </Button>
             </div>
           </div>

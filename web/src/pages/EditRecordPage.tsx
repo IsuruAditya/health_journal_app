@@ -103,7 +103,7 @@ const EditRecordPage: React.FC = () => {
     try {
       // Note: This would require implementing updateRecord in the API service
       // await healthRecordsApi.updateRecord(parseInt(id), formData);
-      navigate(`/records/${id}`);
+      navigate(`/dashboard/records/${id}`);
     } catch (error: any) {
       console.error('Failed to update record:', error);
       setError(error.response?.data?.error || 'Failed to update health record. Please try again.');
@@ -132,13 +132,16 @@ const EditRecordPage: React.FC = () => {
           <span>Back</span>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Health Record</h1>
-          <p className="text-gray-600 mt-1">Update your health information</p>
+          <h1 className="text-3xl font-bold text-foreground">Edit Health Record</h1>
+          <p className="text-muted-foreground mt-1">Update your health information</p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-center gap-2">
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
           {error}
         </div>
       )}
@@ -146,7 +149,7 @@ const EditRecordPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Date"
@@ -167,7 +170,7 @@ const EditRecordPage: React.FC = () => {
 
         {/* SOCRATES Framework */}
         <Card>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Symptom Details (SOCRATES)</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Symptom Details (SOCRATES)</h2>
           <div className="space-y-4">
             <Input
               label="Site (Where is the problem?)"
@@ -188,7 +191,7 @@ const EditRecordPage: React.FC = () => {
               placeholder="e.g., sharp, dull, burning, cramping"
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Severity (1-10 scale)
               </label>
               <input
@@ -199,7 +202,7 @@ const EditRecordPage: React.FC = () => {
                 onChange={(e) => handleInputChange('severity', parseInt(e.target.value))}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>1 (Mild)</span>
                 <span className="font-medium">{formData.severity}/10</span>
                 <span>10 (Severe)</span>

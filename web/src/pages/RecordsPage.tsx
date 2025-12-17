@@ -4,7 +4,7 @@ import { healthRecordsApi } from '@/services/api';
 import HealthRecordCard from '@/components/HealthRecordCard';
 import Button from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type { HealthAnalysis } from '@/types';
 
 const RecordsPage: React.FC = () => {
@@ -44,19 +44,10 @@ const RecordsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Health Records</h1>
-          <p className="text-muted-foreground mt-1">View and manage your health history</p>
-        </div>
-        <Button 
-          className="flex items-center space-x-2"
-          onClick={() => navigate('/records/new')}
-        >
-          <Plus className="h-4 w-4" />
-          <span>New Record</span>
-        </Button>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Health Records</h1>
+        <p className="text-muted-foreground mt-1">View and manage your health history</p>
       </div>
 
       {/* Search */}
@@ -95,7 +86,7 @@ const RecordsPage: React.FC = () => {
             <p className="text-muted-foreground mb-6">
               {searchTerm ? 'Try adjusting your search terms' : 'Start tracking your health by creating your first record'}
             </p>
-            <Button onClick={() => navigate('/records/new')}>
+            <Button onClick={() => navigate('/dashboard/records/new')}>
               Create First Record
             </Button>
           </div>

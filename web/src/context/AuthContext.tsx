@@ -32,16 +32,34 @@ function AuthProvider({ children }: AuthProviderProps) {
     const token = localStorage.getItem('authToken');
     const userData = localStorage.getItem('userData');
     
+    console.log('AuthProvider initializing - token:', !!token, 'userData:', !!userData);
+    
     if (token && userData) {
       try {
-        setUser(JSON.parse(userData));
+        const parsedUser = JSON.parse(userData);
+        console.log('Setting user from localStorage:', parsedUser);
+        setUser(parsedUser);
       } catch (error) {
+        console.log('Error parsing user data, clearing localStorage');
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
       }
     }
     
     setIsLoading(false);
+  }, []);
+
+  // Listen for storage changes (e.g., logout in another tab)
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'authToken' && !e.newValue) {
+        console.log('Auth token removed, logging out user');
+        setUser(null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const login = (userData: User) => {
